@@ -1,0 +1,2 @@
+*.png !text !filter !merge !diff
+*.knsv !text !filter !merge !diff
