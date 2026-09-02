@@ -67,8 +67,10 @@ Configure these settings in the Jellyfin Web UI:
 
 ### TRAWL Configuration
 TRAWL is installed and started automatically as a systemd user service.
-> [!TIP]
-> In **Prowlarr**, update the FlareSolverr API URL to `http://localhost:8191` and apply the appropriate tags.
+> [!IMPORTANT]
+> The MITM proxy requires its CA certificate to be trusted by the system.
+> Run: `sudo cp ~/Projects/Trawl/proxy-ca/ca.crt /etc/ca-certificates/trust-source/anchors/trawl-ca.crt && sudo update-ca-trust`
+> Then in **Prowlarr**, go to Settings > Indexers, add an **HTTP Proxy** (not FlareSolverr) pointing to `127.0.0.1:8192`, and apply the appropriate tags.
 
 ### Sunshine Configuration
 Custom scripts should be symlinked to `/usr/local/bin/`. Manually add these **Do/Undo** commands in the Sunshine Web UI:
