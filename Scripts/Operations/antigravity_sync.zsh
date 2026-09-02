@@ -25,6 +25,7 @@ ln -sf "$SECRETS_DIR/Antigravity/Arch/Skills" "$REPO_DIR/.agents/skills"
 ln -sf "$SECRETS_DIR/Antigravity/Arch/config.json" "$REPO_DIR/.agents/mcp_config.json"
 ln -sf "$SECRETS_DIR/Antigravity/Arch/context.md" "$REPO_DIR/GEMINI.md"
 ln -sf "$SECRETS_DIR/Antigravity/Arch/VSCode" "$REPO_DIR/.vscode"
+ln -sf "$SECRETS_DIR/Antigravity/Arch/EditorConfig" "$REPO_DIR/.editorconfig"
 # END
 
 # ------------------------------------------------------------------------------
