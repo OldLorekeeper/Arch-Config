@@ -53,7 +53,7 @@ print -P "\n%K{blue}%F{black} 2: Media Processing %k%f\n"
 print -P "%F{cyan}ℹ Searching for unoptimized media in $MEDIA_DIR...%f\n"
 
 local -a files
-files=("${(@f)$(find "$MEDIA_DIR" -type f \( -name '*.mkv' -o -name '*.mp4' \))}")
+files=("${(@f)$(find "$MEDIA_DIR/Films" "$MEDIA_DIR/TV" -type f \( -name '*.mkv' -o -name '*.mp4' \))}")
 
 for file in "${files[@]}"; do
     # Re-check time limit before starting a new file
