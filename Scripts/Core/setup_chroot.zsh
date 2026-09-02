@@ -335,9 +335,9 @@ NFT
     TRAWL_DIR="/home/$TARGET_USER/Projects/Trawl"
     print -P "\n%F{cyan}ℹ Installing TRAWL...%f\n"
     sudo -u "$TARGET_USER" git clone https://github.com/germondai/trawl "$TRAWL_DIR"
-    (cd "$TRAWL_DIR" && sudo -u "$TARGET_USER" cp .env.example .env && sudo -u "$TARGET_USER" bun install)
+    (cd "$TRAWL_DIR" && sudo -u "$TARGET_USER" cp .env.example .env && sudo -u "$TARGET_USER" sed -i 's/MITM_PROXY_ENABLED=false/MITM_PROXY_ENABLED=true/g' .env && sudo -u "$TARGET_USER" sed -i "s|MITM_PROXY_CA_DIR=/data/proxy-ca|MITM_PROXY_CA_DIR=/home/$TARGET_USER/Projects/Trawl/proxy-ca|g" .env && sudo -u "$TARGET_USER" bun install)
     
-    print -l "[Unit]" "Description=TRAWL" "After=network.target valkey.service" "[Service]" "Type=simple" "WorkingDirectory=%h/Projects/Trawl" "ExecStart=/usr/bin/bun run dev:api" "Restart=always" "[Install]" "WantedBy=default.target" | sudo -u "$TARGET_USER" tee "/home/$TARGET_USER/.config/systemd/user/trawl.service" > /dev/null
+    print -l "[Unit]" "Description=TRAWL" "After=network.target valkey.service" "[Service]" "Type=simple" "WorkingDirectory=%h/Projects/Trawl" "EnvironmentFile=%h/Projects/Trawl/.env" "ExecStart=/usr/bin/bun run dev:api" "Restart=always" "[Install]" "WantedBy=default.target" | sudo -u "$TARGET_USER" tee "/home/$TARGET_USER/.config/systemd/user/trawl.service" > /dev/null
     sudo -u "$TARGET_USER" ln -sf "/home/$TARGET_USER/.config/systemd/user/trawl.service" "/home/$TARGET_USER/.config/systemd/user/default.target.wants/trawl.service"
 
     ARRSTACK_DIR="/home/$TARGET_USER/Projects/arrstack-mcp"
