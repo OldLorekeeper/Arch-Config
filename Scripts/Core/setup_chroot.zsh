@@ -136,7 +136,7 @@ cd yay; sudo -u "$TARGET_USER" makepkg -si --noconfirm; cd ..; rm -rf yay
 print -P "\n%K{yellow}%F{black} EXTENDED PACKAGES %k%f\n"
 TARGET_AUR=("antigravity" "antigravity-cli" "antigravity-ide" "darkly-bin" "geekbench" "google-chrome" "konsave" "kwin-effects-better-blur-dx" "papirus-folders" "plasma6-applets-panel-colorizer" "timeshift-systemd-timer")
 if [[ "$DEVICE_PROFILE" == "desktop" ]]; then
-    TARGET_AUR+=("lact" "prowlarr-bin" "radarr-bin" "seerr" "sonarr-bin" "sunshine" "bun-bin" "redis")
+    TARGET_AUR+=("lact" "prowlarr-bin" "radarr-bin" "seerr" "sonarr-bin" "sunshine" "bun-bin" "valkey")
 elif [[ "$DEVICE_PROFILE" == "laptop" ]]; then
     TARGET_AUR+=("mkinitcpio-numlock")
 fi
@@ -337,7 +337,7 @@ NFT
     sudo -u "$TARGET_USER" git clone https://github.com/germondai/trawl "$TRAWL_DIR"
     (cd "$TRAWL_DIR" && sudo -u "$TARGET_USER" cp .env.example .env && sudo -u "$TARGET_USER" bun install)
     
-    print -l "[Unit]" "Description=TRAWL" "After=network.target redis.service" "[Service]" "Type=simple" "WorkingDirectory=%h/Projects/Trawl" "ExecStart=/usr/bin/bun run dev:api" "Restart=always" "[Install]" "WantedBy=default.target" | sudo -u "$TARGET_USER" tee "/home/$TARGET_USER/.config/systemd/user/trawl.service" > /dev/null
+    print -l "[Unit]" "Description=TRAWL" "After=network.target valkey.service" "[Service]" "Type=simple" "WorkingDirectory=%h/Projects/Trawl" "ExecStart=/usr/bin/bun run dev:api" "Restart=always" "[Install]" "WantedBy=default.target" | sudo -u "$TARGET_USER" tee "/home/$TARGET_USER/.config/systemd/user/trawl.service" > /dev/null
     sudo -u "$TARGET_USER" ln -sf "/home/$TARGET_USER/.config/systemd/user/trawl.service" "/home/$TARGET_USER/.config/systemd/user/default.target.wants/trawl.service"
 
     ARRSTACK_DIR="/home/$TARGET_USER/Projects/arrstack-mcp"
