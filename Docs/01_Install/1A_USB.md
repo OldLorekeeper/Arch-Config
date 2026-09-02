@@ -1,9 +1,0 @@
-## 1A.1 | Pre-Installation
-
-Follow the ArchWiki pre-installation steps until you have successfully booted into the live environment:
-
-[ArchWiki: Installation Guide](https://wiki.archlinux.org/title/Installation_guide)
-
----
-
-### [Next ⇢](1B_Installation.md)

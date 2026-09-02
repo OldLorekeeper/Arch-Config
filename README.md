@@ -4,7 +4,7 @@
 
 This repository hosts a bespoke automation suite for deploying a high-performance Arch Linux environment. It enforces a strict configuration hierarchy (Core → Device), tailored for maximum throughput and stability across diverse hardware profiles (including AMD Ryzen/RDNA3 desktops and Intel/NVIDIA laptops).
 
-### [Get Started ⇢](1-Install/1.1-USB.md)
+### [Get Started ⇢](Docs/Installation.md)
 
 ---
 ## Hardware specs
