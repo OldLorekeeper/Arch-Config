@@ -26,7 +26,7 @@ GPU: NVIDIA GeForce GTX 960M [Discrete]
 Memory: 3.36 GiB / 7.66 GiB (43%)
 Swap: 0 B / 3.83 GiB (0%)
 Disk (/): 12.26 GiB / 931.51 GiB (1%) - btrfs
-Local IP (wlan0): 192.168.86.44/24
+Local IP (wlan0): 192.168.x.x/24
 Battery (Smart-BAT): 52% [Discharging]
 Locale: en_GB.UTF-8
 ```
