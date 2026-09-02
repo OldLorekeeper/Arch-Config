@@ -1,21 +1,16 @@
-## 1B.1 | Set Keyboard Locale
+# Installation
 
+## 1. Pre-Installation
+Follow the ArchWiki pre-installation steps until you have successfully booted into the live environment:
+[ArchWiki: Installation Guide](https://wiki.archlinux.org/title/Installation_guide)
+
+## 2. Prepare Environment
 ```bash
 loadkeys uk
-```
-
----
-
-## 1B.2 | Connect to WiFi
-
-```bash
 iwctl --passphrase [password] station wlan0 connect [SSID]
 ```
 
----
-
-## 1B.3 | Run Install Script
-
+## 3. Run Install Script
 This modular script handles partitioning, formatting, package installation, and system configuration.
 
 > [!IMPORTANT]
@@ -48,17 +43,13 @@ The script is interactive. Be ready to provide the following information when pr
 4. **Desktop Specifics (Profile 1 Only):**
    - **Media Drive:** You may enter a UUID to mount an existing media partition to `/mnt/Media`.
    - **Services:** All common media services (Arr stack, Transmission, Jellyfin) are configured automatically.
-
    - **Headless/EDID:** Option to inject a custom 2560x1600 EDID for headless streaming. You may need to specify the target port (e.g., `DP-1`).
 
 5. **Disk Selection:**
    - The script lists available drives (e.g., `nvme0n1`).
    - **Warning:** The selected disk will be completely wiped. You must type `yes` to confirm execution.
 
----
-
-## 1B.4 | Reboot
-
+## 4. Reboot
 Once the script prints "System ready," reboot the machine:
 
 ```bash
@@ -67,7 +58,3 @@ reboot
 
 > [!TIP]
 > **First Boot:** Upon logging in, a terminal window will automatically launch to finalize setup (applying Konsave profiles, Sunshine configuration, and KWin rules). **Do not close this window** until it notifies you that setup is complete.
-
----
-
-### [Next ⇢](1C_Post_Install.md)

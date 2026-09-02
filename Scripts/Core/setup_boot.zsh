@@ -67,7 +67,28 @@ fi
 # endregion
 
 # ------------------------------------------------------------------------------
-# 4. Cleanup & Completion
+# 4. App Startup Behaviour
+# ------------------------------------------------------------------------------
+
+# Purpose: Automates modification of .desktop files so apps like Steam and Solaar start minimized.
+
+# region
+print -P "\n%K{yellow}%F{black} APP STARTUP BEHAVIOUR %k%f\n"
+if [[ -f /usr/share/applications/steam.desktop ]]; then
+    print -P "%F{cyan}ℹ Configuring Steam to start minimized...%f\n"
+    cp /usr/share/applications/steam.desktop ~/.local/share/applications/
+    sed -i 's/^Exec=\/usr\/bin\/steam-runtime %U/Exec=\/usr\/bin\/steam-runtime -silent %U/' ~/.local/share/applications/steam.desktop
+fi
+
+if [[ "$DEVICE_PROFILE" == "desktop" ]] && [[ -f /usr/share/applications/solaar.desktop ]]; then
+    print -P "%F{cyan}ℹ Configuring Solaar to start minimized...%f\n"
+    cp /usr/share/applications/solaar.desktop ~/.local/share/applications/
+    sed -i 's/^Exec=solaar/Exec=solaar --window=hide/' ~/.local/share/applications/solaar.desktop
+fi
+# endregion
+
+# ------------------------------------------------------------------------------
+# 5. Cleanup & Completion
 # ------------------------------------------------------------------------------
 
 # Purpose: Removes the temporary first-boot autostart entry and completes the installation process.

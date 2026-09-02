@@ -1,9 +1,9 @@
-## 1C.1 | Install Microsoft Fonts
+# Manual Setup & Edge Cases
 
-1.  Navigate to the Microsoft URL and download the **English International** version of the Windows 11 ISO. 
-2.  Rename it to `win11.iso`.
-3.  Extract and install fonts:
-
+## 1. Install Microsoft Fonts
+1. Navigate to the Microsoft URL and download the **English International** version of the Windows 11 ISO. 
+2. Rename it to `win11.iso`.
+3. Extract and install fonts:
 ```bash
 cd ~/Downloads && \
 7z e win11.iso sources/install.wim && \
@@ -13,31 +13,20 @@ sudo install -d /usr/share/fonts/microsoft && \
 sudo cp -r ~/Downloads/fonts/* /usr/share/fonts/microsoft/
 ```
 
----
-
-## 1C.2 | Setup Obsidian
-
+## 2. Setup Obsidian
 Open `Obsidian` and select the cloned `Arch-Config` repo folder as an existing vault.
 
 > [!NOTE]
 > You may need to manually reinstall the **Git** community plugin from settings. The installation script should have automated your credentials via the Git credential store.
->
->If not, then [Create a fine-grained Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token) on GitHub.
+> If not, create a fine-grained PAT on GitHub.
 
----
-
-## 1C.3 | Install Affinity Software
-
+## 3. Install Affinity Software
 Follow the GUI installation guide at the [AffinityOnLinux GitHub repository](https://github.com/ryzendew/AffinityOnLinux).
 
----
-
-## 1C.4 | MouseTiler
-
+## 4. MouseTiler
 Install MouseTiler and configure using below layouts: https://github.com/rxappdev/MouseTiler
 
 ### Desktop Layouts
-
 ```text
 50,50,2000px,1250px,CENTER,CENTER
 50,50,1500px,950px,CENTER,CENTER
@@ -51,7 +40,6 @@ Install MouseTiler and configure using below layouts: https://github.com/rxappde
 ```
 
 ### Laptop Layouts
-
 ```text
 50,50,1730px,1130px,CENTER,CENTER
 50,50,1116px,1056px,CENTER,CENTER
@@ -64,15 +52,10 @@ Install MouseTiler and configure using below layouts: https://github.com/rxappde
 2x2
 ```
 
-
----
-
-## 1C.5 | Desktop Specifics
+## 5. Desktop Specifics
 
 ### Jellyfin Transcoding
-
 Configure these settings in the Jellyfin Web UI:
-
 - **Hardware acceleration:** VAAPI
 - **VAAPI Device:** `/dev/dri/renderD128`
 - **Options:** Select all hardware decoding options
@@ -83,14 +66,11 @@ Configure these settings in the Jellyfin Web UI:
 - **Preset:** Auto
 
 ### TRAWL Configuration
-
 TRAWL is installed and started automatically as a systemd user service.
-
 > [!TIP]
 > In **Prowlarr**, update the FlareSolverr API URL to `http://localhost:8191` and apply the appropriate tags.
 
 ### Sunshine Configuration
-
 Custom scripts should be symlinked to `/usr/local/bin/`. Manually add these **Do/Undo** commands in the Sunshine Web UI:
 
 | Profile | Do | Undo |
@@ -99,19 +79,21 @@ Custom scripts should be symlinked to `/usr/local/bin/`. Manually add these **Do
 | **SDR** | `/usr/local/bin/sunshine_res enable` | `/usr/local/bin/sunshine_res enable` |
 | **GPU Boost** | `sudo /usr/local/bin/sunshine_gpu_boost start` | `sudo /usr/local/bin/sunshine_gpu_boost stop` |
 
----
-
-## 1C.6 | Laptop Specifics
+## 6. Laptop Specifics
 
 ### Power Management
-
 Configure your specific preferences in KDE:
 1. Open **System Settings**.
 2. Navigate to **Energy Saving**.
 3. Configure **AC Power**, **Battery**, and **Low Battery** settings.
 
----
+## 7. Edge Case KWin Rules
+You may need to add these additional Window rules if you notice any issues with OpenGL displaying in the dock or PiP not working as intended.
 
-### [Next ⇢](../02_KDE_Customisation/2A_Rules.md)
+### Hide OpenGL Renderer
+- **Window title** Exact Match: `OpenGL Renderer`
+- **Skip taskbar** Yes (Apply initially)
 
-```
+### PiP Above
+- **Window title** Exact Match: `Picture-in-picture`
+- **Keep above other windows** Force: Yes
