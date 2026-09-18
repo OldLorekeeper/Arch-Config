@@ -61,6 +61,33 @@ fi
 # END
 
 # ------------------------------------------------------------------------------
+# 4. Lorestone Workspace
+# ------------------------------------------------------------------------------
+# BEGIN
+print -P "\n%K{blue}%F{black} 4. LORESTONE WORKSPACE %k%f\n"
+print -P "%F{cyan}ℹ Enforcing Lorestone local sandboxing...%f\n"
+LORESTONE_DIR="/home/$TARGET_USER/Obsidian/Lorestone"
+if [[ -d "$LORESTONE_DIR" ]]; then
+    mkdir -p "$LORESTONE_DIR/.agents"
+    rm -rf "$LORESTONE_DIR/.agents/rules" "$LORESTONE_DIR/.agents/skills"
+    ln -sf "$SECRETS_DIR/Antigravity/Lorestone/Rules" "$LORESTONE_DIR/.agents/rules"
+    ln -sf "$SECRETS_DIR/Antigravity/Lorestone/Skills" "$LORESTONE_DIR/.agents/skills"
+    ln -sf "$SECRETS_DIR/Antigravity/Lorestone/config.json" "$LORESTONE_DIR/.agents/mcp_config.json"
+    ln -sf "$SECRETS_DIR/Antigravity/Lorestone/context.md" "$LORESTONE_DIR/GEMINI.md"
+    ln -sf "$SECRETS_DIR/Antigravity/Lorestone/git_exclude" "$LORESTONE_DIR/.git/info/exclude"
+fi
+# END
+
+# ------------------------------------------------------------------------------
+# 5. Operations Scripts
+# ------------------------------------------------------------------------------
+# BEGIN
+print -P "\n%K{blue}%F{black} 5. OPERATIONS SCRIPTS %k%f\n"
+print -P "%F{cyan}ℹ Symlinking Scripts from Secrets...%f\n"
+ln -sf "$SECRETS_DIR/Scripts/repo_sync.zsh" "$REPO_DIR/Scripts/Operations/repo_sync.zsh"
+# END
+
+# ------------------------------------------------------------------------------
 # End
 # ------------------------------------------------------------------------------
 # BEGIN
