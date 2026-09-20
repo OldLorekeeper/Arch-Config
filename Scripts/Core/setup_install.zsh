@@ -346,7 +346,7 @@ CORE_PKGS=(
     "npm" "nss-mdns" "obsidian" "papirus-icon-theme" "protontricks" "protonup-qt"
     "qemu-desktop" "realtime-privileges" "steam" "tailscale" "transmission-cli" "uv" "vdpauinfo"
     "virt-manager" "vlc" "vlc-plugin-ffmpeg" "vulkan-headers" "wayland-protocols"
-    "wine" "wine-mono" "winetricks" "xpadneo-dkms"
+    "wine" "wine-mono" "winetricks" "xpadneo-dkms" "inotify-tools"
 )
 
 DESKTOP_PKGS=(
