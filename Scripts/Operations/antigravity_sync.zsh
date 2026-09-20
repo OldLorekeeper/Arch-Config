@@ -85,6 +85,20 @@ ln -sf "$SECRETS_DIR/Scripts/repo_sync.zsh" "$REPO_DIR/Scripts/Operations/repo_s
 # END
 
 # ------------------------------------------------------------------------------
+# 6. Config Watcher Service
+# ------------------------------------------------------------------------------
+# BEGIN
+print -P "\n%K{blue}%F{black} 6. CONFIG WATCHER SERVICE %k%f\n"
+print -P "%F{cyan}ℹ Deploying antigravity-config-watch.service...%f\n"
+mkdir -p "/home/$TARGET_USER/.config/systemd/user"
+ln -sf "$SECRETS_DIR/Antigravity/Global/antigravity-config-watch.service" \
+    "/home/$TARGET_USER/.config/systemd/user/antigravity-config-watch.service"
+systemctl --user daemon-reload
+systemctl --user enable --now antigravity-config-watch.service
+print -P "%F{green}✔ Config watcher service enabled and running.%f\n"
+# END
+
+# ------------------------------------------------------------------------------
 # End
 # ------------------------------------------------------------------------------
 # BEGIN
