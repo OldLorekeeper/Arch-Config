@@ -57,8 +57,17 @@ sync_and_relink() {
 # Purpose: Block on inotifywait and call sync on each relevant event.
 
 # region 2. Watch Loop
-while true; do
-    inotifywait -q -e create -e close_write --include "^config\\.json$" "$WATCH_DIR" 2>/dev/null
+LAST_SYNC=0
+while CHANGED_FILE=$(inotifywait -q -e close_write -e moved_to --format "%f" "$WATCH_DIR" 2>/dev/null); do
+    [[ "$CHANGED_FILE" != "$WATCH_FILE" ]] && continue
+
+    # Debounce: ignore events within 3 seconds of last sync
+    NOW=$(date +%s)
+    if (( NOW - LAST_SYNC < 3 )); then
+        continue
+    fi
+    LAST_SYNC=$NOW
+
     sync_and_relink
 done
 # endregion
