@@ -197,7 +197,7 @@ rm -f "/home/$TARGET_USER/.zshrc"
 ln -sf "$REPO_DIR/Resources/zshrc/zshrc_$DEVICE_PROFILE" "/home/$TARGET_USER/.zshrc"
 
 if [[ "$SECRETS_LOADED" == "true" ]]; then
-    zsh "$REPO_DIR/Scripts/Operations/antigravity_sync.zsh" "$TARGET_USER" || print -P "\n%F{red}⚠ Antigravity Sync encountered an issue but the install will continue.%f\n"
+    zsh "$SECRETS_DIR/Scripts/antigravity_sync.zsh" "$TARGET_USER" || print -P "\n%F{red}⚠ Antigravity Sync encountered an issue but the install will continue.%f\n"
 fi
 # endregion
 
