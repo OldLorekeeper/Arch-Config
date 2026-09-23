@@ -170,10 +170,10 @@ fi
 REPO_DIR="/home/$TARGET_USER/Obsidian/Arch-Config"
 print -P "\n%F{cyan}ℹ Cloning Main Repository...%f\n"
 sudo -u "$TARGET_USER" git clone https://github.com/OldLorekeeper/Arch-Config "$REPO_DIR"
-SECRETS_DIR="$REPO_DIR/Secrets"
+SECRETS_DIR="/home/$TARGET_USER/Obsidian/Secrets"
 if [[ -n "$GIT_PAT" ]]; then
     print -P "\n%F{cyan}ℹ Cloning Private Secrets Repository...%f\n"
-    sudo -u "$TARGET_USER" git clone "https://$GIT_NAME:$GIT_PAT@github.com/OldLorekeeper/Arch-Secrets.git" "$SECRETS_DIR" || mkdir -p "$SECRETS_DIR"
+    sudo -u "$TARGET_USER" git clone "https://$GIT_NAME:$GIT_PAT@github.com/OldLorekeeper/Secrets.git" "$SECRETS_DIR" || mkdir -p "$SECRETS_DIR"
 else
     mkdir -p "$SECRETS_DIR"
 fi

@@ -1,1 +1,1 @@
-/home/curtis/Obsidian/Arch-Config/Secrets/Scripts/repo_sync.zsh
+/home/curtis/Obsidian/Secrets/Scripts/repo_sync.zsh
