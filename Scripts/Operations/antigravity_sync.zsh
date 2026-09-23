@@ -8,7 +8,7 @@
 setopt ERR_EXIT NO_UNSET PIPE_FAIL EXTENDED_GLOB
 TARGET_USER=${1:-user}
 REPO_DIR="/home/$TARGET_USER/Obsidian/Arch-Config"
-SECRETS_DIR="$REPO_DIR/Secrets"
+SECRETS_DIR="/home/$TARGET_USER/Obsidian/Secrets"
 print -P "\n%K{green}%F{black} ANTIGRAVITY SYNC %k%f\n"
 # END
 
@@ -21,6 +21,7 @@ print -P "%F{cyan}ℹ Enforcing local .agents sandboxing...%f\n"
 rm -rf "$REPO_DIR/.agents"
 rm -rf "$REPO_DIR/.vscode"
 ln -sfn "$SECRETS_DIR/Antigravity/Workspaces/Arch-Config/.agents" "$REPO_DIR/.agents"
+ln -sf "$SECRETS_DIR/Antigravity/Workspaces/Arch-Config/.git_exclude" "$REPO_DIR/.git/info/exclude"
 ln -sf "$SECRETS_DIR/Antigravity/Workspaces/Arch-Config/GEMINI.md" "$REPO_DIR/GEMINI.md"
 ln -sfn "$SECRETS_DIR/Antigravity/Workspaces/Arch-Config/.vscode" "$REPO_DIR/.vscode"
 ln -sf "$SECRETS_DIR/Antigravity/Workspaces/Arch-Config/.editorconfig" "$REPO_DIR/.editorconfig"

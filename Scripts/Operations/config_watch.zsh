@@ -10,7 +10,7 @@ setopt NO_UNSET EXTENDED_GLOB
 WATCH_DIR="/home/user/.gemini/config"
 WATCH_FILE="config.json"
 LIVE_PATH="$WATCH_DIR/$WATCH_FILE"
-SECRETS_PATH="/home/user/Obsidian/Arch-Config/Secrets/Antigravity/Global/config.json"
+SECRETS_PATH="/home/user/Obsidian/Secrets/Antigravity/Global/config.json"
 print -P "\n%K{green}%F{black} ANTIGRAVITY CONFIG WATCHER %k%f\n"
 print -P "%F{cyan}ℹ Watching $WATCH_DIR for changes to $WATCH_FILE...%f\n"
 # endregion

@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-cd "/home/user/Obsidian/Arch-Config/Secrets/Antigravity" || exit 1
+cd "/home/user/Obsidian/Secrets/Antigravity" || exit 1
 
 echo "Renaming Global files..."
 git mv Global/config.json Global/mcp_config.json
