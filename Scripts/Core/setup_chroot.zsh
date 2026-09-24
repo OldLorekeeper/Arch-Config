@@ -138,7 +138,7 @@ TARGET_AUR=("antigravity" "antigravity-cli" "antigravity-ide" "darkly-bin" "geek
 if [[ "$DEVICE_PROFILE" == "desktop" ]]; then
     TARGET_AUR+=("lact" "prowlarr-bin" "radarr-bin" "seerr" "sonarr-bin" "sunshine" "bun-bin" "valkey")
 elif [[ "$DEVICE_PROFILE" == "laptop" ]]; then
-    TARGET_AUR+=("mkinitcpio-numlock")
+    TARGET_AUR+=("mkinitcpio-numlock" "thermald")
 fi
 
 print -P "%F{cyan}ℹ Installing Extended Packages via Yay...%f\n"
@@ -392,6 +392,7 @@ EOF
     sed -i 's/^#*PCIE_ASPM_ON_BAT=.*/PCIE_ASPM_ON_BAT=default/' /etc/tlp.conf
     sed -i 's/^#*NVM_ENERGY_PERF_POLICY_ON_BAT=.*/NVM_ENERGY_PERF_POLICY_ON_BAT=default/' /etc/tlp.conf
     systemctl enable tlp
+    systemctl disable NetworkManager-wait-online.service
 fi
 # endregion
 
@@ -407,7 +408,11 @@ print -P "%F{cyan}ℹ Removing Discover and Plasma Meta...%f\n"
 pacman -Qi plasma-meta &>/dev/null && { pacman -R --noconfirm plasma-meta; pacman -D --asexplicit plasma-desktop; }
 pacman -Qi discover &>/dev/null && pacman -Rns --noconfirm discover
 
-print -l "[zram0]" "zram-size = ram / 2" "compression-algorithm = lz4" "swap-priority = 100" > /etc/systemd/zram-generator.conf
+if [[ "$DEVICE_PROFILE" == "desktop" ]]; then
+    print -l "[zram0]" "zram-size = ram / 2" "compression-algorithm = lz4" "swap-priority = 100" > /etc/systemd/zram-generator.conf
+else
+    print -l "[zram0]" "zram-size = ram / 2" "compression-algorithm = zstd" "swap-priority = 100" > /etc/systemd/zram-generator.conf
+fi
 print -l "vm.swappiness = 150" "vm.page-cluster = 0" "vm.max_map_count = 2147483642" > /etc/sysctl.d/99-swappiness.conf
 print -l "net.core.default_qdisc = cake" "net.ipv4.tcp_congestion_control = bbr" > /etc/sysctl.d/99-bbr.conf
 print -l "net.ipv4.ip_forward = 1" "net.ipv6.conf.all.forwarding = 1" > /etc/sysctl.d/99-tailscale.conf
@@ -427,7 +432,7 @@ if [[ "$DEVICE_PROFILE" == "desktop" ]]; then
 elif [[ "$DEVICE_PROFILE" == "laptop" ]]; then
     mkdir -p /etc/scx_loader
     print 'default_sched = "scx_bpfland"' > /etc/scx_loader/config.toml
-    systemctl enable --now scx_loader.service btrfs-balance.timer btrfs-scrub@-.timer timeshift-hourly.timer
+    systemctl enable --now scx_loader.service btrfs-balance.timer btrfs-scrub@-.timer timeshift-hourly.timer paccache.timer thermald
 else
     systemctl enable --now btrfs-balance.timer btrfs-scrub@-.timer timeshift-hourly.timer
 fi
@@ -442,7 +447,9 @@ else
 fi
 print -l "[Trigger]" "Operation = Install" "Operation = Upgrade" "Operation = Remove" "Type = Package" "Target = linux-cachyos" "[Action]" "Description = Updating GRUB..." "When = PostTransaction" "Exec = /usr/bin/grub-mkconfig -o /boot/grub/grub.cfg" > /etc/pacman.d/hooks/99-update-grub.hook
 
-sed -i 's/^#COMPRESSION="zstd"/COMPRESSION="lz4"/' /etc/mkinitcpio.conf
+if [[ "$DEVICE_PROFILE" == "desktop" ]]; then
+    sed -i 's/^#COMPRESSION="zstd"/COMPRESSION="lz4"/' /etc/mkinitcpio.conf
+fi
 
 print -P "\n%F{cyan}ℹ Regenerating initramfs and GRUB...%f\n"
 mkinitcpio -P; grub-mkconfig -o /boot/grub/grub.cfg
