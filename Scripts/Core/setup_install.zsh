@@ -233,7 +233,7 @@ else
 fi
 sed -i 's/^#Color/Color/' /etc/pacman.conf
 sed -i 's/^#*ParallelDownloads\s*=.*/ParallelDownloads = 20/' /etc/pacman.conf
-reflector --country GB,IE,NL,DE,FR,EU --latest 20 --sort rate --save /etc/pacman.d/mirrorlist
+reflector --country GB,IE,NL,DE,FR,EU --protocol https --latest 20 --sort rate --save /etc/pacman.d/mirrorlist
 
 print -P "\n%F{cyan}ℹ Adding CachyOS repositories...%f\n"
 pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
@@ -329,7 +329,7 @@ print -P "\n%K{blue}%F{black} 6. BASE INSTALLATION %k%f\n"
 
 CORE_PKGS=(
     "base" "base-devel" "bluez" "bluez-utils" "btrfs-progs"
-    "cachyos-keyring" "cachyos-mirrorlist" "cachyos-settings"
+    "cachyos-keyring" "cachyos-mirrorlist" "cachyos-rate-mirrors" "cachyos-settings"
     "efibootmgr" "git" "git-lfs" "grub" "grub-btrfs" "linux-cachyos"
     "linux-cachyos-headers" "linux-firmware" "networkmanager" "networkmanager-qt"
     "openssh" "pacman-contrib" "reflector" "sudo" "timeshift" "vim"

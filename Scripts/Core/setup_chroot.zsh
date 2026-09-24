@@ -64,10 +64,10 @@ print -P "%F{cyan}ℹ Configuring NetworkManager, iwd, and Bluetooth...%f\n"
 mkdir -p /etc/NetworkManager/conf.d; print -l "[device]" "wifi.backend=iwd" > /etc/NetworkManager/conf.d/wifi_backend.conf
 mkdir -p /etc/iwd; print -l "[General]" "Country=GB" > /etc/iwd/main.conf
 sed -i 's/^#*\(Experimental = \).*/\1true/' /etc/bluetooth/main.conf
-systemctl enable NetworkManager bluetooth sshd plasmalogin fwupd.service reflector.timer
+systemctl enable NetworkManager bluetooth sshd plasmalogin fwupd.service reflector.timer cachyos-rate-mirrors.timer
 
 mkdir -p /etc/xdg/reflector
-print -l -- "--country GB,IE,NL,DE,FR,EU" "--latest 20" "--sort rate" "--save /etc/pacman.d/mirrorlist" > /etc/xdg/reflector/reflector.conf
+print -l -- "--country GB,IE,NL,DE,FR,EU" "--protocol https" "--latest 20" "--sort rate" "--save /etc/pacman.d/mirrorlist" > /etc/xdg/reflector/reflector.conf
 
 print -P "\n%F{cyan}ℹ Installing Network Dispatcher Scripts...%f\n"
 mkdir -p /etc/NetworkManager/dispatcher.d

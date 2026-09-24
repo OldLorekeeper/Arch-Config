@@ -156,7 +156,7 @@ typeset -a TARGET_SERVICES
 typeset -a TARGET_USER_SERVICES
 TARGET_SERVICES=(
     "NetworkManager" "bluetooth" "sshd" "plasmalogin" "fwupd"
-    "reflector.timer" "btrfs-balance.timer" "btrfs-scrub@-.timer" "timeshift-hourly.timer"
+    "reflector.timer" "cachyos-rate-mirrors.timer" "btrfs-balance.timer" "btrfs-scrub@-.timer" "timeshift-hourly.timer"
 )
 
 if [[ "$PROFILE_TYPE" == "Desktop" ]]; then
