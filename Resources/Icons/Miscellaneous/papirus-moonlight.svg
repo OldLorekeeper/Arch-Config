@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><defs><filter id="papirus-highlight" x="-10%" y="-10%" width="120%" height="120%">
+  <feOffset dy="1" dx="0" in="SourceAlpha" result="offsetDown" />
+  <feComposite in="SourceAlpha" in2="offsetDown" operator="out" result="topEdge" />
+  <feFlood flood-color="#ffffff" flood-opacity="0.3" result="whiteHighlight" />
+  <feComposite in="whiteHighlight" in2="topEdge" operator="in" result="highlight" />
+  <feMerge>
+    <feMergeNode in="SourceGraphic" />
+    <feMergeNode in="highlight" />
+  </feMerge>
+</filter></defs><g fill="#000000" opacity="0.2" transform="translate(0, 1)"><path d="M 58,32 A 26,26 0 0,1 32,58 A 26,26 0 0,1 6,32 A 26,26 0 0,1 32,6 A 26,26 0 0,1 58,32 Z" /></g><g filter="url(#papirus-highlight)"><path fill="#565c64" d="M 58,32 A 26,26 0 0,1 32,58 A 26,26 0 0,1 6,32 A 26,26 0 0,1 32,6 A 26,26 0 0,1 58,32 Z" /><path d="M 51.5,32 A 19.5,19.5 0 0,1 32,51.5 A 19.5,19.5 0 0,1 12.5,32 A 19.5,19.5 0 0,1 32,12.5 A 19.5,19.5 0 0,1 51.5,32 Z" fill="#000000" opacity="0.15" transform="translate(0, 1)" /><path fill="#ffffff" d="M 51.5,32 A 19.5,19.5 0 0,1 32,51.5 A 19.5,19.5 0 0,1 12.5,32 A 19.5,19.5 0 0,1 32,12.5 A 19.5,19.5 0 0,1 51.5,32 Z" /><path fill="#565c64" d="M 33.9621875,32.8125 L 51.5,32.8125 L 51.5,31.1875 L 33.9621875,31.1875 L 46.36296875,18.78671875 L 45.21328125,17.63703125 L 32.8125,30.0378125 L 32.8125,12.5 L 31.1875,12.5 L 31.1875,30.0378125 L 18.78671875,17.63703125 L 17.63703125,18.78671875 L 30.0378125,31.1875 L 12.5,31.1875 L 12.5,32.8125 L 30.0378125,32.8125 L 17.63703125,45.21328125 L 18.78671875,46.36296875 L 31.1875,33.9621875 L 31.1875,51.5 L 32.8125,51.5 L 32.8125,33.9621875 L 45.21328125,46.36296875 L 46.36296875,45.21328125 L 33.9621875,32.8125 Z" /></g></svg>
