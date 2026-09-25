@@ -35,3 +35,33 @@
 ## Fixes (Round 30 - Google Sheets Stroke Scaling)
 - **Stroke Preservation:** The `svgelements` path baker successfully scaled all path coordinates to 64x64, but left the explicit `stroke-width="12"` property unscaled on the white grid lines in `google-sheets-2026.svg`. 
 - **Scale Math:** Mathematically multiplied the native `12px` stroke by the original `0.35` group scale to produce the correct absolute `4.2px` stroke width, restoring the precise visual weight of the inner grid lines on the 64x64 canvas.
+
+## Fixes (Round 31 - Jellyfin Native Rebuild)
+- **Geometry Baking:** Sourced the official `512x512` Jellyfin SVG and developed a custom transformation matrix to scale the visual footprint down perfectly into a centered `64x64` viewbox (using `scale=0.101` and `translate=6`).
+- **Standardization:** Built the icon to strict Papirus standards by explicitly inserting a black `opacity=0.2` drop shadow layer (`translate(0,1)`) underneath the graphic, mapping the `gradientTransform` matrix to preserve the official gradient ratio, and capping it with the standard `dy=1` Papirus SVG filter edge.
+
+## Fixes (Round 32 - Jellyfin Size Matching)
+- **Scale Harmonization:** The initial Jellyfin bake deliberately played it safe with a standard 52px visual bounding box (10.1% scale). However, the Google Workspace icons (like Drive) command massive 58px visual bounds.
+- **Recalibration:** Recalculated the native affine transformation matrix on the Jellyfin SVG to push its scaling up to 10.9% (56px bounding box with exactly 4px of centered grid padding). This equalizes its visual surface area and presence on the dock directly against the oversized Workspace SVGs while keeping all gradients and highlights locked perfectly in place.
+
+## Fixes (Round 33 - Google Docs Scale & Baseline Alignment)
+- **Baseline Correction:** Identified that `google-docs-2026.svg` was manually drawn significantly taller (56px) and offset vertically, dropping its visual baseline 4 pixels deeper into the dock compared to `gmail-2026.svg` and `google-calendar-2026.svg` (which share a 52px height footprint).
+- **Geometric Harmonization:** Stripped out its hand-drawn physical white crescent edge, converted all shapes to absolute paths, and applied a strict `0.9` scaling matrix. This reduced the height to exactly `50.4px` and mathematically centered it at `Y=32.0`, restoring perfect horizontal alignment across the Workspace dock array.
+- **Edge Standardization:** Re-injected the identical `papirus-highlight` SVG filter block to match the other icons natively.
+
+## Fixes (Round 34 - Google Docs Scale Bump)
+- **Visual Weight Correction:** The strict `0.9` geometric scale on Google Docs successfully centered its baseline but left its overall visual footprint too narrow compared to the wider, square-like Calendar icon.
+- **Scale Recalibration:** Reverted and bumped the affine scale matrix to `0.94`, boosting the icon's height to `52.6px` (perfectly mirroring Calendar's 52.5px height) while restoring enough width to anchor it visually on the dock without breaking the centered baseline.
+
+## Fixes (Round 35 - Google Docs Pixel-Perfect Baseline Alignment)
+- **Baseline Discrepancy:** Discovered that Calendar is actually shifted upwards by ~2 pixels natively, meaning Docs was mathematically centered on the grid but visually sitting too low and looking shrunken next to Calendar's massive 52.5px square block.
+- **Mathematical Alignment:** Calculated the exact bottom edge of Calendar (`Y=56.32`) and engineered a custom affine matrix (`[0.97, 0, 0, 0.97, 0.96, -1.88]`) for Docs. This locked Docs' bottom edge exactly to Calendar's baseline while pushing the scaling back up to `97%`, granting Docs the vertical height and horizontal mass needed to visually equal the square.
+
+## Fixes (Round 36 - Google Docs Top-Edge Harmonization)
+- **Visual Weight Correction:** Aligning Docs purely to the bottom baseline broke the top-edge alignment against Gmail and Drive, making it look misaligned and too tall at the top.
+- **Top-Down Anchoring:** Engineered a new affine matrix `[0.95, 0, 0, 0.95, 1.6, 0.2]` that explicitly locks the top edge of Google Docs to `Y=4.0`. This mathematically perfectly bridges the top edges of Calendar (`Y=3.84`) and Drive (`Y=4.54`), while allowing the bottom edge to reach `Y=57.2`, acting as the perfect geometric bridge between Calendar's short bottom and Drive's deep bottom.
+
+## Fixes (Round 37 - Optical Scaling & Corner Restoration)
+- **Optical Illusion vs Mathematics:** Attempting to force Google Docs (a narrow document shape) into the exact vertical baseline as Calendar (a wide square) violated the optical mass principles of the Papirus icon theme. Papirus dictates that narrow document icons must span from `Y=4` to `Y=60` to carry the same visual weight as `52x52` square icons.
+- **Corner Degradation:** By scaling the icon to align the baselines, the mathematically perfect `8px` rounded corners were compressed into `7.6px` radii, breaking standardization with native icons like `novelwriter.svg`.
+- **Restoration:** Restored the icon to a strict `1.0` scale. Kept only the programmatic filter injections, ensuring Google Docs retains its official 56x44 Papirus shape, perfect 8px curves, and standard optical overhang.
