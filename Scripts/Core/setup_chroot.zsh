@@ -278,8 +278,7 @@ if [[ "$DEVICE_PROFILE" == "desktop" ]]; then
     chmod +x /usr/local/bin/replace-sunshine-icons.sh; /usr/local/bin/replace-sunshine-icons.sh
     
     mkdir -p /etc/pacman.d/hooks
-    print -l "[Trigger]" "Operation = Install" "Operation = Upgrade" "Type = Package" "Target = sunshine" "[Action]" "When = PostTransaction" "Exec = /usr/local/bin/replace-sunshine-icons.sh" > /etc/pacman.d/hooks/sunshine-icons.hook
-    
+    print -l "[Trigger]" "Operation = Install" "Operation = Upgrade" "Type = Package" "Target = sunshine" "[Action]" "When = PostTransaction" "Exec = /usr/local/bin/replace-sunshine-icons.sh" > /etc/pacman.d/hooks/sunshine-icons.hook    
     mkdir -p /etc/lact
     print -l "version: 5" "daemon:" "  admin_group: wheel" "gpus:" "  default:" "    fan_control_enabled: true" "    fan_control_settings:" "      mode: curve" "      temperature_key: junction" "      curve:" "        40: 0.2" "        95: 1.0" "    power_cap: 310.0" "    performance_level: manual" > /etc/lact/config.yaml
     systemctl enable lactd
@@ -446,6 +445,9 @@ else
     sed -i 's|^MODULES=.*|MODULES=(i915 nvme)|' /etc/mkinitcpio.conf
 fi
 print -l "[Trigger]" "Operation = Install" "Operation = Upgrade" "Operation = Remove" "Type = Package" "Target = linux-cachyos" "[Action]" "Description = Updating GRUB..." "When = PostTransaction" "Exec = /usr/bin/grub-mkconfig -o /boot/grub/grub.cfg" > /etc/pacman.d/hooks/99-update-grub.hook
+print -l "[Trigger]" "Operation = Install" "Operation = Upgrade" "Type = Package" "Target = novelwriter" "[Action]" "Description = Applying custom Papirus icon to novelWriter internal assets..." "When = PostTransaction" "Exec = /bin/sh -c 'cp /home/curtis/Obsidian/Arch-Config/Resources/Icons/novelWriter/novelwriter.svg /usr/lib/python*/site-packages/novelwriter/assets/icons/novelwriter.svg'" > /etc/pacman.d/hooks/novelwriter-icon.hook
+print -l "[Trigger]" "Operation = Install" "Operation = Upgrade" "Type = Package" "Target = papirus-icon-theme" "[Action]" "Description = Applying custom Antigravity symbolic icons to Papirus..." "When = PostTransaction" "Exec = /bin/sh -c 'cp /home/curtis/Obsidian/Arch-Config/Resources/Icons/GoogleWorkspace/google-antigravity-symbolic.svg /usr/share/icons/Papirus/16x16/symbolic/apps/antigravity-symbolic.svg && cp /home/curtis/Obsidian/Arch-Config/Resources/Icons/GoogleWorkspace/google-antigravity-symbolic.svg /usr/share/icons/Papirus/16x16/symbolic/apps/antigravity-ide-symbolic.svg'" > /etc/pacman.d/hooks/antigravity-icon.hook
+print -l "[Trigger]" "Operation = Install" "Operation = Upgrade" "Type = Package" "Target = antigravity" "[Action]" "Description = Patching Antigravity internal tray icons..." "When = PostTransaction" "Exec = /home/curtis/Obsidian/Arch-Config/Scripts/Utils/patch_antigravity_tray.sh" > /etc/pacman.d/hooks/antigravity-tray.hook
 
 if [[ "$DEVICE_PROFILE" == "desktop" ]]; then
     sed -i 's/^#COMPRESSION="zstd"/COMPRESSION="lz4"/' /etc/mkinitcpio.conf
