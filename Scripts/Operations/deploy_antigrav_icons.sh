@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "Deploying Antigravity Icon Hooks..."
 
-sudo sh -c "cat << 'INNEREOF' > /etc/pacman.d/hooks/antigravity-icon.hook
+sudo -A sh -c "cat << 'INNEREOF' > /etc/pacman.d/hooks/antigravity-icon.hook
 [Trigger]
 Operation = Install
 Operation = Upgrade
