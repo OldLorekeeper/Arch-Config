@@ -274,7 +274,7 @@ if [[ "$DEVICE_PROFILE" == "desktop" ]]; then
     sed -i "s|^GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"$GRUB_CMDLINE\"|" /etc/default/grub
     sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=2/' /etc/default/grub
     
-    print -l '#!/bin/bash' 'shopt -s nullglob' "cp \"$REPO_DIR/Resources/Icons/Sunshine\"/*.svg \"/usr/share/icons/hicolor/scalable/status/\"" 'setcap cap_sys_admin+p $(readlink -f $(command -v sunshine))' > /usr/local/bin/replace-sunshine-icons.sh
+    print -l '#!/bin/bash' 'shopt -s nullglob' "cp \"$REPO_DIR/Resources/Icons/Sunshine\"/*.svg \"/usr/share/sunshine/web/images/\" && cp \"$REPO_DIR/Resources/Icons/Sunshine\"/*.png \"/usr/share/sunshine/web/images/\"" 'setcap cap_sys_admin+p $(readlink -f $(command -v sunshine))' > /usr/local/bin/replace-sunshine-icons.sh
     chmod +x /usr/local/bin/replace-sunshine-icons.sh; /usr/local/bin/replace-sunshine-icons.sh
     
     mkdir -p /etc/pacman.d/hooks
