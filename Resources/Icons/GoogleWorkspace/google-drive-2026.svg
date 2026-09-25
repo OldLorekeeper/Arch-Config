@@ -1,19 +1,28 @@
 <?xml version='1.0' encoding='utf-8'?>
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
-  <!-- Shadow Group -->
+  
   <g opacity="0.2">
-    <path fill="#000000" d="M 32.171,46.709 l 15.614,-27.044 l 10.886,18.855 c 4.973,8.614 -1.243,19.380 -11.189,19.380 h -8.849 z" />
-    <path fill="#000000" d="M 23.008,30.843 l 15.622,27.057 h -21.771 c -9.946,0.000 -16.162,-10.767 -11.189,-19.380 l 4.432,-7.677 z" />
-    <path fill="#000000" d="M 41.331,30.846 l -31.230,0.000 l 10.880,-18.846 c 4.973,-8.613 17.406,-8.614 22.378,0.000 l 4.426,7.666 z" />
+    <path fill="#000000" d="M 32.171,46.709 l 15.614,-27.044 l 10.886,18.855 c 4.973,8.614 -1.243,19.38 -11.189,19.38 l -8.849,0 z" />
+    <path fill="#000000" d="M 23.008,30.843 l 15.622,27.057 l -21.771,0 c -9.946,0 -16.162,-10.767 -11.189,-19.38 l 4.432,-7.677 z" />
+    <path fill="#000000" d="M 41.331,30.846 l -31.23,0 l 10.88,-18.846 c 4.973,-8.613 17.406,-8.614 22.378,0 l 4.426,7.666 z" />
   </g>
 
-  <!-- Main Group -->
-  <g>
-    <!-- Yellow -->
-    <path fill="#fec700" d="M 32.171,45.709 l 15.614,-27.044 l 10.886,18.855 c 4.973,8.614 -1.243,19.380 -11.189,19.380 h -8.849 z" />
-    <!-- Blue -->
-    <path fill="#3186ff" d="M 23.008,29.843 l 15.622,27.057 h -21.771 c -9.946,0.000 -16.162,-10.767 -11.189,-19.380 l 4.432,-7.677 z" />
-    <!-- Green -->
-    <path fill="#0ebc5f" d="M 41.331,29.846 l -31.230,0.000 l 10.880,-18.846 c 4.973,-8.613 17.406,-8.614 22.378,0.000 l 4.426,7.666 z" />
+  
+  <g filter="url(#papirus-highlight)">
+    
+    <path fill="#fec700" d="M 32.171,45.709 l 15.614,-27.044 l 10.886,18.855 c 4.973,8.614 -1.243,19.38 -11.189,19.38 l -8.849,0 z" />
+    
+    <path fill="#3186ff" d="M 23.008,29.843 l 15.622,27.057 l -21.771,0 c -9.946,0 -16.162,-10.767 -11.189,-19.38 l 4.432,-7.677 z" />
+    
+    <path fill="#0ebc5f" d="M 41.331,29.846 l -31.23,0 l 10.88,-18.846 c 4.973,-8.613 17.406,-8.614 22.378,0 l 4.426,7.666 z" />
   </g>
-</svg>
+<defs><filter id="papirus-highlight" x="-10%" y="-10%" width="120%" height="120%">
+  <feOffset dy="1" dx="0" in="SourceAlpha" result="offsetDown" />
+  <feComposite in="SourceAlpha" in2="offsetDown" operator="out" result="topEdge" />
+  <feFlood flood-color="#ffffff" flood-opacity="0.5" result="whiteHighlight" />
+  <feComposite in="whiteHighlight" in2="topEdge" operator="in" result="highlight" />
+  <feMerge>
+    <feMergeNode in="SourceGraphic" />
+    <feMergeNode in="highlight" />
+  </feMerge>
+</filter></defs></svg>
