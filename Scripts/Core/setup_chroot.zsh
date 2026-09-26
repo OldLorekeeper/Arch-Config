@@ -250,7 +250,7 @@ fi
 print -P "\n%F{cyan}ℹ Applying KWin Rules...%f\n"
 sudo -u "$TARGET_USER" "$REPO_DIR/Scripts/Operations/kwin_sync.zsh" "$DEVICE_PROFILE"
 
-grep -q "WINEFSYNC=1" /etc/environment || print -l "WINEFSYNC=1" "PROTON_USE_NTSYNC=1" "PROTON_ENABLE_WAYLAND=1" >> /etc/environment
+grep -q "PROTON_ENABLE_WAYLAND=1" /etc/environment || print -l "PROTON_ENABLE_WAYLAND=1" >> /etc/environment
 print 'ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]", ATTR{queue/scheduler}="none"' > /etc/udev/rules.d/60-iosched.rules
 
 if [[ "$DEVICE_PROFILE" == "desktop" ]]; then
@@ -264,7 +264,7 @@ if [[ "$DEVICE_PROFILE" == "desktop" ]]; then
     
     print 'SUBSYSTEM=="pci", ATTR{vendor}=="0x1022", ATTR{device}=="0x43f7", ATTR{power/control}="on"' > /etc/udev/rules.d/99-xhci-fix.rules
     print 'w /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference - - - - performance' > /etc/tmpfiles.d/amd-epp.conf
-    GRUB_CMDLINE="split_lock_detect=off loglevel=3 quiet amdgpu.ppfeaturemask=0xffffffff video=3440x1440@60 zswap.enabled=0"
+    GRUB_CMDLINE="split_lock_detect=off loglevel=3 quiet amdgpu.ppfeaturemask=0xffffffff video=3440x1440@60 zswap.enabled=0 mitigations=off amd_pstate=active"
     EDID_SRC="$REPO_DIR/Resources/Sunshine/custom_sunshine.bin"
     if [[ "$EDID_ENABLE" == (#i)y* ]] && [[ -f "$EDID_SRC" ]]; then
         mkdir -p /usr/lib/firmware/edid; cp "$EDID_SRC" /usr/lib/firmware/edid/
@@ -413,7 +413,7 @@ else
     print -l "[zram0]" "zram-size = ram / 2" "compression-algorithm = zstd" "swap-priority = 100" > /etc/systemd/zram-generator.conf
 fi
 print -l "vm.swappiness = 150" "vm.page-cluster = 0" "vm.max_map_count = 2147483642" > /etc/sysctl.d/99-swappiness.conf
-print -l "net.core.default_qdisc = cake" "net.ipv4.tcp_congestion_control = bbr" > /etc/sysctl.d/99-bbr.conf
+print -l "net.core.default_qdisc = fq" "net.ipv4.tcp_congestion_control = bbr" > /etc/sysctl.d/99-bbr.conf
 print -l "net.ipv4.ip_forward = 1" "net.ipv6.conf.all.forwarding = 1" > /etc/sysctl.d/99-tailscale.conf
 
 print -l "[Unit]" "Description=Run Btrfs Balance Monthly" "[Timer]" "OnCalendar=monthly" "Persistent=true" "[Install]" "WantedBy=timers.target" > /etc/systemd/system/btrfs-balance.timer
