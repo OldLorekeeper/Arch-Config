@@ -1,31 +1,47 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-  <!-- 1px subtle ambient shadow (Matches rounded corners exactly) -->
-  <path d="M 18 5 H 40 L 54 19 V 53 C 54 57.418 50.418 61 46 61 H 18 C 13.582 61 10 57.418 10 53 V 13 C 10 8.582 13.582 5 18 5 Z" fill="#000000" opacity="0.2"/>
+  <defs>
+    <filter id="papirus-highlight" x="-10%" y="-10%" width="120%" height="120%">
+      <feOffset dy="1" dx="0" in="SourceAlpha" result="offsetDown" />
+      <feComposite in="SourceAlpha" in2="offsetDown" operator="out" result="topEdge" />
+      <feFlood flood-color="#ffffff" flood-opacity="0.25" result="whiteHighlight" />
+      <feComposite in="whiteHighlight" in2="topEdge" operator="in" result="highlight" />
+      <feMerge>
+        <feMergeNode in="SourceGraphic" />
+        <feMergeNode in="highlight" />
+      </feMerge>
+    </filter>
+  </defs>
 
-  <!-- Paper / Document Base (Indigo) with Papirus standard 8px rounded corners -->
-  <path d="M 18 4 H 40 L 54 18 V 52 C 54 56.418 50.418 60 46 60 H 18 C 13.582 60 10 56.418 10 52 V 12 C 10 7.582 13.582 4 18 4 Z" fill="#3949ab"/>
-  
-  <!-- Folded corner -->
-  <path d="M 54 18 L 40 18 L 40 4 Z" fill="#ffffff" opacity="0.5"/>
+  <!-- Master Drop Shadow -->
+  <g fill="#000000" opacity="0.2" transform="translate(0, 1)">
+    <!-- Document Base -->
+    <path d="M 18 4 H 40 L 54 18 V 52 C 54 56.418 50.418 60 46 60 H 18 C 13.582 60 10 56.418 10 52 V 12 C 10 7.582 13.582 4 18 4 Z"/>
+  </g>
 
-  <!-- Lines of text on the paper -->
-  <rect x="18" y="20" width="16" height="3" fill="#ffffff" opacity="0.5"/>
-  <rect x="18" y="28" width="24" height="3" fill="#ffffff" opacity="0.5"/>
-  <rect x="18" y="36" width="20" height="3" fill="#ffffff" opacity="0.5"/>
-  <rect x="18" y="44" width="12" height="3" fill="#ffffff" opacity="0.5"/>
+  <g filter="url(#papirus-highlight)">
+    <!-- Paper / Document Base (Indigo) with Papirus standard 8px rounded corners -->
+    <path d="M 18 4 H 40 L 54 18 V 52 C 54 56.418 50.418 60 46 60 H 18 C 13.582 60 10 56.418 10 52 V 12 C 10 7.582 13.582 4 18 4 Z" fill="#3949ab"/>
+    
+    <!-- Folded corner -->
+    <path d="M 54 18 L 40 18 L 40 4 Z" fill="#ffffff" opacity="0.5"/>
 
-  <!-- Mathematically exact 45-degree drop shadow from the pen, tracking the rounded corner -->
-  <path d="M 42 24 L 54 36 V 52 C 54 56.418 50.418 60 46 60 H 40.5 L 37.5 57 L 33 45 Z" fill="#000000" opacity="0.2"/>
+    <!-- Lines of text on the paper -->
+    <rect x="18" y="20" width="16" height="3" fill="#ffffff" opacity="0.5"/>
+    <rect x="18" y="28" width="24" height="3" fill="#ffffff" opacity="0.5"/>
+    <rect x="18" y="36" width="20" height="3" fill="#ffffff" opacity="0.5"/>
+    <rect x="18" y="44" width="12" height="3" fill="#ffffff" opacity="0.5"/>
 
-  <!-- Fountain pen icon overlay -->
-  <g transform="translate(-6, -3) scale(1.5)">
+    <!-- Mathematically exact 45-degree drop shadow from the pen, tracking the rounded corner -->
+    <path d="M 42 24 L 54 36 V 52 C 54 56.418 50.418 60 46 60 H 40.5 L 37.5 57 L 33 45 Z" fill="#000000" opacity="0.2"/>
+
+    <!-- Fountain pen icon overlay (Baked natively) -->
     <!-- Pen body -->
-    <path d="M 32 18 L 38 32 L 35 40 L 29 40 L 26 32 Z" fill="#ffca28"/>
+    <path d="M 42 24 L 51 45 L 46.5 57 L 37.5 57 L 33 45 Z" fill="#ffca28"/>
     <!-- I-beam text caret -->
-    <g fill="none" stroke="#3949ab" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-       <line x1="30.5" y1="26.5" x2="33.5" y2="26.5"/>
-       <line x1="32" y1="26.5" x2="32" y2="36"/>
-       <line x1="30.5" y1="36" x2="33.5" y2="36"/>
+    <g fill="none" stroke="#3949ab" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+       <line x1="39.75" y1="36.75" x2="44.25" y2="36.75"/>
+       <line x1="42" y1="36.75" x2="42" y2="51"/>
+       <line x1="39.75" y1="51" x2="44.25" y2="51"/>
     </g>
   </g>
 </svg>
