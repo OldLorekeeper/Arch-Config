@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" version="1">
+  <!-- Papirus Master Drop Shadow -->
+  <g fill="#000000" opacity="0.2" transform="translate(0, 1)">
+    <circle cx="32" cy="32" r="28"/>
+  </g>
+  
+  <g>
+    <!-- Base -->
+    <circle cx="32" cy="32" r="28" fill="#565c64"/>
+    
+    <!-- White edge round the entire circle for contrast on dark docks -->
+    <circle cx="32" cy="32" r="27.5" style="fill:none;stroke:#ffffff;stroke-width:1;opacity:0.3"/>
+
+    <!-- Inner circle with localized shadow -->
+    <circle cx="32" cy="32" r="21" fill="#000000" opacity="0.2" transform="translate(0, 1.5)"/>
+    <circle cx="32" cy="32" r="21" fill="#ffffff"/>
+
+    <!-- Inner cross path with localized shadow -->
+    <path d="M 34.113 32.875 L 53.000 32.875 L 53.000 31.125 L 34.113 31.125 L 47.468 17.770 L 46.230 16.532 L 32.875 29.887 L 32.875 11.000 L 31.125 11.000 L 31.125 29.887 L 17.770 16.532 L 16.532 17.770 L 29.887 31.125 L 11.000 31.125 L 11.000 32.875 L 29.887 32.875 L 16.532 46.230 L 17.770 47.468 L 31.125 34.113 L 31.125 53.000 L 32.875 53.000 L 32.875 34.113 L 46.230 47.468 L 47.468 46.230 L 34.113 32.875 Z" fill="#000000" opacity="0.2" transform="translate(0, 1.5)"/>
+    <path d="M 34.113 32.875 L 53.000 32.875 L 53.000 31.125 L 34.113 31.125 L 47.468 17.770 L 46.230 16.532 L 32.875 29.887 L 32.875 11.000 L 31.125 11.000 L 31.125 29.887 L 17.770 16.532 L 16.532 17.770 L 29.887 31.125 L 11.000 31.125 L 11.000 32.875 L 29.887 32.875 L 16.532 46.230 L 17.770 47.468 L 31.125 34.113 L 31.125 53.000 L 32.875 53.000 L 32.875 34.113 L 46.230 47.468 L 47.468 46.230 L 34.113 32.875 Z" fill="#565c64"/>
+  </g>
+</svg>
