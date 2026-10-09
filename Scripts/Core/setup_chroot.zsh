@@ -354,6 +354,9 @@ elif [[ "$DEVICE_PROFILE" == "laptop" ]]; then
     
     print -P "\n%F{cyan}ℹ Disabling NVIDIA GPU for power savings...%f\n"
     print -l "blacklist nouveau" "options nouveau modeset=0" "blacklist nvidia" "blacklist nvidia_drm" "blacklist nvidia_modeset" "blacklist nvidia_uvm" > /etc/modprobe.d/disable-nvidia.conf
+    
+    print -P "\n%F{cyan}ℹ Optimising Intel Wi-Fi aggregation & power scheme...%f\n"
+    print -l "options iwlwifi 11n_disable=8" "options iwlmvm power_scheme=1" > /etc/modprobe.d/iwlwifi.conf
     cat <<'INI' > /etc/systemd/system/nvidia-acpi-off.service
 [Unit]
 Description=Disable NVIDIA GPU on boot
