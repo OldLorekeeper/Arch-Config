@@ -2,6 +2,13 @@
 Arch-Config Declarative System Deployer (pyinfra)
 Orchestrates base configuration, security, users, packages, and profile-specific hardware logic.
 """
+import sys
+from pathlib import Path
+
+# Ensure repository root is on sys.path so 'import System.*' works regardless of working directory
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 from pyinfra.operations import server
 from System.config import get_config

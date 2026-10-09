@@ -156,7 +156,7 @@ print -P "\n%K{blue}%F{black} 5. STATE AUDIT & SERVICES %k%f\n"
 REPO_ROOT=${SCRIPT_DIR:h:h}
 if [[ -f "$REPO_ROOT/System/deploy.py" ]] && (( $+commands[uv] )); then
     print -P "%F{cyan}ℹ Running pyinfra declarative drift audit...%f\n"
-    SYS_PROFILE="${(L)PROFILE_TYPE}" uv run --with pyinfra pyinfra @local "$REPO_ROOT/System/deploy.py" || print -P "%F{yellow}⚠ pyinfra reported warnings%f\n"
+    PYTHONPATH="$REPO_ROOT" SYS_PROFILE="${(L)PROFILE_TYPE}" uv run --with pyinfra pyinfra @local "$REPO_ROOT/System/deploy.py" --dry || print -P "%F{yellow}⚠ pyinfra reported warnings%f\n"
 fi
 
 typeset -a TARGET_SERVICES
