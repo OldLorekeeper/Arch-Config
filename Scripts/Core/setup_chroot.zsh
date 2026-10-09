@@ -263,6 +263,7 @@ if [[ "$DEVICE_PROFILE" == "desktop" ]]; then
     sudo -u "$TARGET_USER" bash -c '(crontab -l 2>/dev/null; echo "0 1 * * * /usr/local/bin/media_optimizer > /tmp/media_optimizer.log 2>&1") | crontab -'
     
     print 'SUBSYSTEM=="pci", ATTR{vendor}=="0x1022", ATTR{device}=="0x43f7", ATTR{power/control}="on"' > /etc/udev/rules.d/99-xhci-fix.rules
+    print 'options rtw89_pci disable_aspm_l1=y disable_aspm_l1ss=y' > /etc/modprobe.d/rtw89.conf
     print 'w /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference - - - - performance' > /etc/tmpfiles.d/amd-epp.conf
     GRUB_CMDLINE="split_lock_detect=off loglevel=3 quiet amdgpu.ppfeaturemask=0xffffffff video=3440x1440@60 zswap.enabled=0 mitigations=off amd_pstate=active"
     EDID_SRC="$REPO_DIR/Resources/Sunshine/custom_sunshine.bin"
