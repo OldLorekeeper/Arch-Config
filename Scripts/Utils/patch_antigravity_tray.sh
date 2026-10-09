@@ -28,9 +28,13 @@ if [ ! -d "patch_antigrav_asar" ]; then
     exit 1
 fi
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
 echo "Injecting PNGs..."
-cp /home/user/Obsidian/Arch-Config/Resources/Icons/GoogleWorkspace/trayTemplate.png patch_antigrav_asar/trayTemplate.png
-cp /home/user/Obsidian/Arch-Config/Resources/Icons/GoogleWorkspace/trayTemplate@2x.png patch_antigrav_asar/trayTemplate@2x.png
+cp "$REPO_DIR/Resources/Icons/GoogleWorkspace/trayTemplate.png" patch_antigrav_asar/trayTemplate.png
+cp "$REPO_DIR/Resources/Icons/GoogleWorkspace/trayTemplate@2x.png" patch_antigrav_asar/trayTemplate@2x.png
+
 
 echo "Patching JS..."
 sed -i "s/(0, utils_1.isMacOS)() ? 'trayTemplate.png' : 'icon.png'/'trayTemplate.png'/g" patch_antigrav_asar/dist/tray.js

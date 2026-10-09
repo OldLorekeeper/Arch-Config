@@ -70,7 +70,7 @@ reboot
 ```
 
 > [!TIP]
-> **First Boot (Stage 3):** Upon logging in to KDE Plasma, a terminal window will automatically launch [`setup_boot.zsh`](file:///home/user/Obsidian/Arch-Config/Scripts/Core/setup_boot.zsh) to connect Tailscale, prompt for Sunshine display mode indices, and migrate Git PAT to KWallet (`libsecret`). **Do not close this window** until it self-destructs.
+> **First Boot (Stage 3):** Upon logging in to KDE Plasma, a terminal window will automatically launch [`setup_boot.zsh`](../Scripts/Core/setup_boot.zsh) to connect Tailscale, prompt for Sunshine display mode indices, and migrate Git PAT to KWallet (`libsecret`). **Do not close this window** until it self-destructs.
 
 ---
 

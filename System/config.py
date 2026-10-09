@@ -48,7 +48,7 @@ def get_config():
     target_user = cfg.get("TARGET_USER") or os.environ.get("SUDO_USER") or os.environ.get("USER") or "user"
     if target_user == "root":
         # Check /home for single user
-        users = [p.name for p in Path("/home").iterdir() if p.is_dir()]
+        users = [p.name for p in Path("/home").iterdir() if p.is_dir() and not p.name.startswith(".")]
         target_user = users[0] if len(users) == 1 else "user"
     cfg["TARGET_USER"] = target_user
 
