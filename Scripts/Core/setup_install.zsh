@@ -28,26 +28,10 @@ if ! ping -c 3 archlinux.org &>/dev/null; then
     exit 1
 fi
 
-if [[ -f "$SCRIPT_DIR/setup_chroot.zsh" ]]; then
-    print -P "%F{cyan}ℹ Using local Core directory...%f\n"
-    PAYLOAD_DIR="$SCRIPT_DIR"
-else
-    print -P "%F{cyan}ℹ Fetching installer components...%f\n"
-    if ! curl -fsSL "https://github.com/OldLorekeeper/Arch-Config/archive/refs/heads/main.zip" -o /tmp/amd_setup.zip; then
-        print -P "%F{red}Error: Failed to fetch repository.%f\n"
-        exit 1
-    fi
-    mkdir -p /tmp/amd_setup
-    bsdtar -xf /tmp/amd_setup.zip -C /tmp/amd_setup --strip-components=1
-    PAYLOAD_DIR="/tmp/amd_setup/Scripts/Core"
-    if [[ ! -d "$PAYLOAD_DIR" ]]; then
-        print -P "%F{red}Error: Failed to locate Core in downloaded repository.%f\n"
-        exit 1
-    fi
-fi
-
 SECRETS_FILE="setup_secrets.enc"
-RAW_URL="https://raw.githubusercontent.com/OldLorekeeper/Arch-Config/main/Scripts/Core/$SECRETS_FILE"
+[[ -f "$SCRIPT_DIR/$SECRETS_FILE" ]] && SECRETS_FILE="$SCRIPT_DIR/$SECRETS_FILE"
+RAW_URL="https://raw.githubusercontent.com/OldLorekeeper/Arch-Config/main/Scripts/Core/setup_secrets.enc"
+
 if [[ ! -f "$SECRETS_FILE" ]]; then
     print -P "\n%F{cyan}ℹ Secrets file not found locally. Attempting remote fetch...%f\n"
     if curl -fsSL "$RAW_URL" -o "$SECRETS_FILE"; then
@@ -394,43 +378,93 @@ cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 # region
 print -P "\n%K{blue}%F{black} 7. SYSTEM CONFIGURATION (CHROOT) %k%f\n"
 
-cat <<ZSH > /mnt/install_vars.zsh
-TARGET_USER=${(q)TARGET_USER}
-ROOT_PASS=${(q)ROOT_PASS}
-USER_PASS=${(q)USER_PASS}
-HOSTNAME=${(q)HOSTNAME}
-GIT_NAME=${(q)GIT_NAME}
-GIT_EMAIL=${(q)GIT_EMAIL}
-GIT_PAT=${(q)GIT_PAT}
-APPLY_KONSAVE=${(q)APPLY_KONSAVE}
-DEVICE_PROFILE=${(q)DEVICE_PROFILE}
-MEDIA_UUID=${(q)MEDIA_UUID}
-MONITOR_PORT=${(q)MONITOR_PORT}
-EDID_ENABLE=${(q)EDID_ENABLE:-}
-SECRETS_LOADED=${(q)SECRETS_LOADED:-false}
-ZSH
+# Purpose: Clones configuration repositories into target system and executes declarative deployment via pyinfra within arch-chroot.
 
-print -P "%F{cyan}ℹ Injecting payload scripts into chroot...%f\n"
-cp "$PAYLOAD_DIR/setup_chroot.zsh" /mnt/setup_chroot.zsh
-cp "$PAYLOAD_DIR/setup_boot.zsh" /mnt/setup_boot.zsh
-chmod +x /mnt/setup_chroot.zsh
+# region
+print -P "\n%K{blue}%F{black} 7. SYSTEM CONFIGURATION (CHROOT) %k%f\n"
 
-arch-chroot /mnt /setup_chroot.zsh
+cat <<JSON > /mnt/install_vars.json
+{
+  "TARGET_USER": "${TARGET_USER}",
+  "ROOT_PASS": "${ROOT_PASS}",
+  "USER_PASS": "${USER_PASS}",
+  "HOSTNAME": "${HOSTNAME}",
+  "GIT_NAME": "${GIT_NAME}",
+  "GIT_EMAIL": "${GIT_EMAIL}",
+  "GIT_PAT": "${GIT_PAT}",
+  "APPLY_KONSAVE": "${APPLY_KONSAVE}",
+  "DEVICE_PROFILE": "${DEVICE_PROFILE}",
+  "MEDIA_UUID": "${MEDIA_UUID}",
+  "MONITOR_PORT": "${MONITOR_PORT}",
+  "EDID_ENABLE": "${EDID_ENABLE:-}",
+  "SECRETS_LOADED": "${SECRETS_LOADED:-false}"
+}
+JSON
+chmod 600 /mnt/install_vars.json
+
+REPO_DEST="/mnt/home/$TARGET_USER/Obsidian/Arch-Config"
+SECRETS_DEST="/mnt/home/$TARGET_USER/Obsidian/Secrets"
+mkdir -p "${REPO_DEST:h}"
+
+print -P "%F{cyan}ℹ Cloning Arch-Config repository into target...%f\n"
+git clone https://github.com/OldLorekeeper/Arch-Config "$REPO_DEST"
+
+if [[ -n "$GIT_PAT" ]]; then
+    print -P "\n%F{cyan}ℹ Cloning private Secrets repository...%f\n"
+    git clone "https://$GIT_NAME:$GIT_PAT@github.com/OldLorekeeper/Secrets.git" "$SECRETS_DEST" || mkdir -p "$SECRETS_DEST"
+else
+    mkdir -p "$SECRETS_DEST"
+fi
+chmod +x "$REPO_DEST/Scripts/"*/*.zsh 2>/dev/null || true
+
+# Schedule First-Boot Graphical Setup
+BOOT_SRC="$REPO_DEST/Scripts/Core/setup_boot.zsh"
+if [[ -f "$BOOT_SRC" ]]; then
+    mkdir -p "/mnt/home/$TARGET_USER/.local/bin" "/mnt/home/$TARGET_USER/.config/autostart"
+    cp "$BOOT_SRC" "/mnt/home/$TARGET_USER/.local/bin/setup_boot.zsh"
+    sed -i "s/\$DEVICE_PROFILE/$DEVICE_PROFILE/g" "/mnt/home/$TARGET_USER/.local/bin/setup_boot.zsh"
+    chmod +x "/mnt/home/$TARGET_USER/.local/bin/setup_boot.zsh"
+    if [[ -n "$GIT_PAT" && -n "$GIT_NAME" ]]; then
+        sed -i "s|^# GIT_INJECTION_MARKER.*|print -l \"protocol=https\" \"host=github.com\" \"username=$GIT_NAME\" \"password=$GIT_PAT\" \\| git credential approve|" "/mnt/home/$TARGET_USER/.local/bin/setup_boot.zsh"
+    fi
+    cat <<INI > "/mnt/home/$TARGET_USER/.config/autostart/setup_boot.desktop"
+[Desktop Entry]
+Type=Application
+Exec=konsole --separate --hide-tabbar -e /home/$TARGET_USER/.local/bin/setup_boot.zsh
+Hidden=false
+NoDisplay=false
+Name=First Boot Setup
+X-GNOME-Autostart-enabled=true
+INI
+fi
+
+# Enable temporary chroot sudo access
+mkdir -p /mnt/etc/sudoers.d
+print "$TARGET_USER ALL=(ALL) NOPASSWD: ALL" > /mnt/etc/sudoers.d/99_setup_temp
+chmod 440 /mnt/etc/sudoers.d/99_setup_temp
+
+# Execute declarative pyinfra deployment inside chroot
+print -P "\n%F{cyan}ℹ Executing declarative deployment via pyinfra...%f\n"
+arch-chroot /mnt uv run --with pyinfra pyinfra @local "/home/$TARGET_USER/Obsidian/Arch-Config/System/deploy.py"
+
+rm -f /mnt/etc/sudoers.d/99_setup_temp
 # endregion
 
 # ------------------------------------------------------------------------------
 # 8. Completion
 # ------------------------------------------------------------------------------
 
-# Purpose: Cleans up temporary scripts and unmounts the system.
+# Purpose: Cleans up temporary files and unmounts the system.
 
 # region
-rm -f /mnt/setup_chroot.zsh
+rm -f /mnt/install_vars.json /mnt/install_vars.zsh 2>/dev/null || true
 umount -R /mnt
+
 print -P "\n%K{green}%F{black} PROCESS COMPLETE %k%f\n"
 # endregion
 
 print -P "\n%F{yellow}Please reboot system and remove installation media%f\n"
 print -P "%F{cyan}ℹ Use 'reboot' command...%f\n"
 
-# ANTIGRAVITY LINK: Next stage is executed inside chroot via -> Scripts/Core/setup_chroot.zsh
+# ANTIGRAVITY LINK: Next stage is executed on first login via -> Scripts/Core/setup_boot.zsh
+

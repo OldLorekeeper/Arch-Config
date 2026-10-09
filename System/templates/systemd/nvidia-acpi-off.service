@@ -1,0 +1,11 @@
+[Unit]
+Description=Disable NVIDIA GPU on boot
+After=sysinit.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c "echo '\\_SB.PCI0.PEG0.PEGP._OFF' > /proc/acpi/call"
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

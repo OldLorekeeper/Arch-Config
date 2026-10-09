@@ -148,13 +148,21 @@ fi
 # 5. Service Health Check
 # ------------------------------------------------------------------------------
 
-# Purpose: Validates that critical services are enabled and active. Dynamically builds the service list based on the active Device Profile.
+# Purpose: Executes pyinfra drift audit and validates that critical services are enabled and active. Dynamically builds the service list based on the active Device Profile.
 
 # region 5. Service Health Check
-print -P "\n%K{blue}%F{black} 5. SERVICE HEALTH CHECK %k%f\n"
+print -P "\n%K{blue}%F{black} 5. STATE AUDIT & SERVICES %k%f\n"
+
+REPO_ROOT=${SCRIPT_DIR:h:h}
+if [[ -f "$REPO_ROOT/System/deploy.py" ]] && (( $+commands[uv] )); then
+    print -P "%F{cyan}ℹ Running pyinfra declarative drift audit...%f\n"
+    SYS_PROFILE="${(L)PROFILE_TYPE}" uv run --with pyinfra pyinfra @local "$REPO_ROOT/System/deploy.py" || print -P "%F{yellow}⚠ pyinfra reported warnings%f\n"
+fi
+
 typeset -a TARGET_SERVICES
 typeset -a TARGET_USER_SERVICES
 TARGET_SERVICES=(
+
     "NetworkManager" "bluetooth" "sshd" "plasmalogin" "fwupd"
     "reflector.timer" "btrfs-balance.timer" "btrfs-scrub@-.timer" "timeshift-hourly.timer"
 )

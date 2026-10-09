@@ -1,0 +1,4 @@
+#!/bin/bash
+if [[ "$1" == wl* ]] && [[ "$2" == "up" ]]; then
+    /usr/bin/iw dev "$1" set power_save off
+fi

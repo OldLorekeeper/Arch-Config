@@ -6,6 +6,14 @@ This repository hosts a bespoke automation suite for deploying a high-performanc
 
 ### [Get Started ⇢](Docs/Installation.md)
 
+```bash
+# Live USB interactive installation:
+zsh <(curl -Ls https://smplu.link/bYUs7)
+
+# Installed system declarative drift audit:
+uv run --with pyinfra pyinfra @local System/deploy.py --dry
+```
+
 ---
 ## Hardware specs
 
@@ -35,39 +43,44 @@ The scripts and steps contained in this repo are tailored to the below system pr
 ---
 ## Architecture
 
-​The setup utilises a seamlessly modular installer to ensure consistency and atomic configuration.
+The setup utilises a modular multi-stage deployment pipeline ensuring reproducible, declarative configuration.
 
-#### ​Stage 1: Unified Installer (Live Environment)
+#### Stage 1: Bare-Metal Installer (Live Environment)
 
-​**Script:** setup_install.zsh (Zsh)
+**Script:** `setup_install.zsh` (Zsh)
 
-- ​**Pre-flight:** Validates UEFI boot mode and internet connectivity.
-- ​**Configuration:** Collects user inputs (Hostname, Passwords, Git Credentials) and Device Profile (Desktop/Laptop).
-- ​**Partitioning:** Wipes the target disk and creates a Btrfs layout with optimised subvolumes (including +C for @games).
-- ​**Base System:** Bootstraps CachyOS (x86-64-v4) via pacstrap, replacing archinstall.
-- ​**System Configuration:** Injects network config (iwd/NetworkManager), creates users, and establishes the build environment within chroot.
+- **Pre-flight:** Validates UEFI boot mode, internet connectivity, and decrypts secrets (`setup_secrets.enc`).
+- **Configuration:** Collects target configuration parameters and clones repository trees into the target disk.
+- **Partitioning:** Formats Btrfs layout with optimised subvolumes (including `+C` for `@games`).
+- **Base System:** Pacstraps CachyOS base kernel, `uv`, and core system packages.
+- **Handoff:** Hands off execution directly to Stage 2 inside `arch-chroot`.
 
-#### ​Stage 2: First Boot Automation
+#### Stage 2: Declarative System Provisioning
 
-​**Mechanism:** first_boot.zsh (Auto-generated)
+**Engine:** `System/deploy.py` (pyinfra via `uv`)
 
-- ​**Execution:** Runs automatically upon first login via a self-destructing Autostart entry.
-- ​**Device Tuning:** Applies profile-specific configurations (Desktop/Laptop) defined in the installer.
-- ​**Visuals:** Applies Konsave profiles and KWin rules.
-- ​**Hardware:** Configures Sunshine (if Desktop) or specific power profiles (if Laptop).
+- **Single Source of Truth:** Manages pacman/AUR packages, users, sudo policies, kernel parameters, sysctl, network dispatchers, and systemd units.
+- **Profile Tuning:** Automatically applies desktop (AMD Ryzen 7800X3D / RX 7900 XT / LACT / Sunshine) or laptop (Intel / ACPI dGPU isolation / TLP) hardware optimisations.
+- **Theming & Desktop:** Deploys Papirus dark icons, Konsole color schemes, Oh My Zsh configurations, Konsave profiles, and KWin rules.
+- **Secrets Cleanup:** Erases temporary installation variables from the target filesystem prior to unmounting.
 
-#### ​Stage 3: Manual Finalisation
+#### Stage 3: First Graphical Login
 
-- ​**Tasks:** Installation of proprietary fonts, authentication of Obsidian, and application-specific setup.
+**Script:** `setup_boot.zsh` (Zsh Autostart)
+
+- **Execution:** Runs automatically upon first user desktop login in a floating terminal window.
+- **Interactive Prompts:** Configures Tailscale node association and Sunshine display mode indexes.
+- **Self-Destruct:** Removes the autostart entry and cleans up on completion.
 
 ---
 ## Development standards
 
-This repository adheres to strict scripting standards to maintain stability:
+This repository adheres to strict configuration standards to maintain stability:
 
-- **Shell:** `zsh` is used for all system logic and configuration.
-- **Idempotency:** Post-install scripts are designed to be safe to re-run to repair configuration drift.
-- **Safety:** All zsh scripts utilise `setopt ERR_EXIT NO_UNSET PIPE_FAIL`.
+- **Declarative Core:** `pyinfra` (orchestrated ephemerally via `uv`) serves as the definitive source of truth for system state and configuration drift remediation.
+- **Shell:** `zsh` is reserved for bare-metal bootstrapping and standalone operational CLI utilities.
+- **Idempotency:** All pyinfra deployment operations and maintenance scripts are idempotent and safe to re-run.
+- **Safety:** All zsh scripts enforce `setopt ERR_EXIT NO_UNSET PIPE_FAIL`.
 - **Formatting:** Scripts utilise compact layouts with double-dotted line separators for readability (see [Templates](./Scripts/Templates) folder))
 
 ---

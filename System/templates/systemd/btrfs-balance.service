@@ -1,0 +1,6 @@
+[Unit]
+Description=Btrfs Balance
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/btrfs balance start -dusage=50 -musage=50 /

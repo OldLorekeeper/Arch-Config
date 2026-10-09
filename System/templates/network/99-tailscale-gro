@@ -1,0 +1,2 @@
+#!/bin/zsh
+[[ "$2" == "up" ]] && /usr/bin/ethtool -K "$1" rx-udp-gro-forwarding on rx-gro-list off 2>/dev/null || true

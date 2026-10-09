@@ -1,0 +1,14 @@
+version: 5
+daemon:
+  admin_group: wheel
+gpus:
+  default:
+    fan_control_enabled: true
+    fan_control_settings:
+      mode: curve
+      temperature_key: junction
+      curve:
+        40: 0.2
+        95: 1.0
+    power_cap: 310.0
+    performance_level: manual

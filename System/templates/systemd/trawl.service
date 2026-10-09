@@ -1,0 +1,13 @@
+[Unit]
+Description=TRAWL
+After=network.target valkey.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Projects/Trawl
+EnvironmentFile=%h/Projects/Trawl/.env
+ExecStart=/usr/bin/bun run dev:api
+Restart=always
+
+[Install]
+WantedBy=default.target
