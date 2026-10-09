@@ -1,1 +1,1 @@
-/home/user/Obsidian/Secrets/Scripts/repo_sync.zsh
+../../../Secrets/Scripts/repo_sync.zsh
