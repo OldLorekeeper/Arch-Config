@@ -63,3 +63,17 @@ files.directory(
     mode="0755",
     present=True,
 )
+
+# 5. Git Global Identity
+git_name = cfg.get("GIT_NAME") or "OldLorekeeper"
+git_email = cfg.get("GIT_EMAIL") or "OldLorekeeper@users.noreply.github.com"
+
+server.shell(
+    name="Configure user git identity and credential helper",
+    commands=[
+        f'sudo -u {target_user} git config --global user.name "{git_name}"',
+        f'sudo -u {target_user} git config --global user.email "{git_email}"',
+        f"sudo -u {target_user} git config --global credential.helper libsecret",
+    ],
+)
+

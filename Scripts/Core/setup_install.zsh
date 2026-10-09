@@ -96,17 +96,20 @@ fi
 
 print -P "\n%K{yellow}%F{black} GIT IDENTITY %k%f\n"
 if [[ -z "${GIT_NAME:-}" ]]; then
-    print -P "%F{yellow}Enter Git Commit Name:%f"
+    print -P "%F{yellow}Enter Git Commit Name [default: OldLorekeeper]:%f"
     read "GIT_NAME?Name: "
+    GIT_NAME="${GIT_NAME:-OldLorekeeper}"
 else
     print -P "Git Name:     %F{green}$GIT_NAME%f"
 fi
 if [[ -z "${GIT_EMAIL:-}" ]]; then
-    print -P "%F{yellow}Enter Git Email:%f"
+    print -P "%F{yellow}Enter Git Email [default: OldLorekeeper@users.noreply.github.com]:%f"
     read "GIT_EMAIL?Email: "
+    GIT_EMAIL="${GIT_EMAIL:-OldLorekeeper@users.noreply.github.com}"
 else
     print -P "Git Email:    %F{green}$GIT_EMAIL%f"
 fi
+
 if [[ -n "${GIT_PAT:-}" ]]; then
     print -P "Git PAT:      %F{green}Loaded from secrets%f"
 else
