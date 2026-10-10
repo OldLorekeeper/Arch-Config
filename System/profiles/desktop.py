@@ -144,8 +144,8 @@ files.line(
 
 # 6. Sunshine Game Streaming
 for script in [
-    "sunshine_gpu_boost.zsh", "sunshine_hdr.zsh", "sunshine_res.zsh",
-    "sunshine_laptop.zsh", "sunshine_configure.zsh", "sunshine_pixel.zsh"
+    "sunshine_hdr.zsh", "sunshine_res.zsh", "sunshine_laptop.zsh",
+    "sunshine_configure.zsh", "sunshine_pixel.zsh"
 ]:
     script_path = Path(repo_dir) / "Scripts" / "Sunshine" / script
     if script_path.exists():
@@ -156,6 +156,12 @@ for script in [
             target=str(script_path),
             symbolic=True,
         )
+
+files.file(
+    name="Remove obsolete sunshine_gpu_boost symlink",
+    path="/usr/local/bin/sunshine_gpu_boost",
+    present=False,
+)
 
 sunshine_icons_script = f"""#!/bin/bash
 shopt -s nullglob
@@ -187,12 +193,12 @@ Exec = /usr/local/bin/replace-sunshine-icons.sh
 """),
 )
 
-files.put(
-    name="Configure NOPASSWD for sunshine_gpu_boost",
-    dest="/etc/sudoers.d/90-sunshine-boost",
-    src=StringIO(f"{target_user} ALL=(ALL) NOPASSWD: /usr/local/bin/sunshine_gpu_boost\n"),
-    mode="0440",
-)
+for old_sudo in ["90-sunshine-boost", "zz_sunshine_boost"]:
+    files.file(
+        name=f"Remove obsolete {old_sudo} sudoers drop-in",
+        path=f"/etc/sudoers.d/{old_sudo}",
+        present=False,
+    )
 
 files.file(
     name="Enable systemd linger for user",
