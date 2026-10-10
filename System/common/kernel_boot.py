@@ -72,6 +72,13 @@ files.put(
 
 # 6. grub-btrfsd & GRUB Bootloader
 server.shell(
+    name="Disable redundant EFI BootNext entries in GRUB",
+    commands=[
+        "[[ -f /etc/grub.d/31_efi_bootnext ]] && chmod -x /etc/grub.d/31_efi_bootnext || true"
+    ],
+)
+
+server.shell(
     name="Ensure GRUB EFI bootloader is installed",
     commands=[
         """if [[ ! -f /efi/EFI/GRUB/grubx64.efi ]]; then
