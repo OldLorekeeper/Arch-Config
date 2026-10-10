@@ -215,6 +215,21 @@ files.link(
     user=target_user,
 )
 
+files.directory(
+    name="Ensure sunshine user systemd drop-in directory exists",
+    path=f"/home/{target_user}/.config/systemd/user/app-dev.lizardbyte.app.Sunshine.service.d",
+    user=target_user,
+    group=target_user,
+    present=True,
+)
+files.put(
+    name="Install Sunshine systemd restart override",
+    dest=f"/home/{target_user}/.config/systemd/user/app-dev.lizardbyte.app.Sunshine.service.d/override.conf",
+    src=str(TEMPLATES_DIR / "systemd" / "sunshine-override.conf"),
+    user=target_user,
+    group=target_user,
+)
+
 # Sunshine QoS via nftables
 files.put(
     name="Configure Sunshine QoS nftables rules",
