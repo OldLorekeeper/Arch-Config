@@ -9,9 +9,10 @@ TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
 
 # 1. Environment Variables
 files.line(
-    name="Enable Wayland in Proton",
+    name="Remove global PROTON_ENABLE_WAYLAND from /etc/environment",
     path="/etc/environment",
-    line="PROTON_ENABLE_WAYLAND=1",
+    line=r"^PROTON_ENABLE_WAYLAND=.*",
+    present=False,
 )
 
 # 2. IO Scheduler

@@ -114,7 +114,7 @@ if edid_enabled:
         if mon_port:
             edid_flag = f" drm.edid_firmware={mon_port}:edid/custom_sunshine.bin"
 
-grub_cmdline = f"split_lock_detect=off loglevel=3 quiet amdgpu.ppfeaturemask=0xffffffff video=3440x1440@60{edid_flag} zswap.enabled=0 mitigations=off amd_pstate=active"
+grub_cmdline = f"split_lock_detect=off loglevel=3 quiet amdgpu.ppfeaturemask=0xffffffff video=3440x1440@60{edid_flag} mitigations=off amd_pstate=active"
 
 files.line(
     name="Configure GRUB kernel command line for Desktop",
