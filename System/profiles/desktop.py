@@ -108,8 +108,8 @@ if cfg.get("EDID_ENABLE", "").lower().startswith("y"):
         files.line(
             name="Include custom EDID in mkinitcpio FILES",
             path="/etc/mkinitcpio.conf",
-            line="FILES=(/usr/lib/firmware/edid/custom_sunshine.bin)",
-            replace=r"^FILES=.*",
+            line=r"^FILES=.*",
+            replace="FILES=(/usr/lib/firmware/edid/custom_sunshine.bin)",
         )
         mon_port = cfg.get("MONITOR_PORT", "")
         if mon_port:
@@ -118,27 +118,27 @@ if cfg.get("EDID_ENABLE", "").lower().startswith("y"):
 files.line(
     name="Configure GRUB kernel command line for Desktop",
     path="/etc/default/grub",
-    line=f'GRUB_CMDLINE_LINUX_DEFAULT="{grub_cmdline}"',
-    replace=r"^GRUB_CMDLINE_LINUX_DEFAULT=.*",
+    line=r"^GRUB_CMDLINE_LINUX_DEFAULT=.*",
+    replace=f'GRUB_CMDLINE_LINUX_DEFAULT="{grub_cmdline}"',
 )
 files.line(
     name="Set GRUB timeout to 2s",
     path="/etc/default/grub",
-    line="GRUB_TIMEOUT=2",
-    replace=r"^GRUB_TIMEOUT=.*",
+    line=r"^GRUB_TIMEOUT=.*",
+    replace="GRUB_TIMEOUT=2",
 )
 
 files.line(
     name="Set mkinitcpio modules for AMD",
     path="/etc/mkinitcpio.conf",
-    line="MODULES=(amdgpu nvme)",
-    replace=r"^MODULES=.*",
+    line=r"^MODULES=.*",
+    replace="MODULES=(amdgpu nvme)",
 )
 files.line(
     name="Set mkinitcpio compression to lz4",
     path="/etc/mkinitcpio.conf",
-    line='COMPRESSION="lz4"',
-    replace=r"^#*COMPRESSION=.*",
+    line=r"^#*COMPRESSION=.*",
+    replace='COMPRESSION="lz4"',
 )
 
 # 6. Sunshine Game Streaming

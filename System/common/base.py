@@ -65,20 +65,20 @@ files.put(
 files.line(
     name="Tune makepkg native architecture",
     path="/etc/makepkg.conf",
-    line='CFLAGS="-march=native -O2 -pipe -fno-plt -fexceptions -Wp,-D_FORTIFY_SOURCE=3 -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection"',
-    replace=r"^CFLAGS=.*",
+    line=r"^#*CFLAGS=.*",
+    replace='CFLAGS="-march=native -O2 -pipe -fno-plt -fexceptions -Wp,-D_FORTIFY_SOURCE=3 -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection"',
 )
 files.line(
     name="Tune makepkg multi-core flags",
     path="/etc/makepkg.conf",
-    line='MAKEFLAGS="-j$(nproc)"',
-    replace=r"^#*MAKEFLAGS=.*",
+    line=r"^#*MAKEFLAGS=.*",
+    replace='MAKEFLAGS="-j$(nproc)"',
 )
 files.line(
     name="Tune makepkg zstd compression",
     path="/etc/makepkg.conf",
-    line="COMPRESSZST=(zstd -c -z -q -T0 -3 -)",
-    replace=r"^#*COMPRESSZST=.*",
+    line=r"^#*COMPRESSZST=.*",
+    replace="COMPRESSZST=(zstd -c -z -q -T0 -3 -)",
 )
 files.line(
     name="Tune makepkg native rust target",
@@ -88,8 +88,8 @@ files.line(
 files.line(
     name="Tune makepkg build directory to tmpfs",
     path="/etc/makepkg.conf",
-    line="BUILDDIR=/tmp/makepkg",
-    replace=r"^#*BUILDDIR=.*",
+    line=r"^#*BUILDDIR=.*",
+    replace="BUILDDIR=/tmp/makepkg",
 )
 
 # 5. Pacman & CachyOS Repositories
@@ -99,32 +99,26 @@ arch_v = "x86_64_v4" if profile == "desktop" else "x86_64_v3"
 files.line(
     name="Configure pacman parallel downloads",
     path="/etc/pacman.conf",
-    line=f"ParallelDownloads = {parallel_dl}",
-    replace=r"^#*ParallelDownloads\s*=.*",
+    line=r"^#*ParallelDownloads\s*=.*",
+    replace=f"ParallelDownloads = {parallel_dl}",
 )
 files.line(
     name="Enable pacman color output",
     path="/etc/pacman.conf",
-    line="Color",
-    replace=r"^#*Color",
+    line=r"^#*Color",
+    replace="Color",
 )
 files.line(
     name="Configure pacman architecture target",
     path="/etc/pacman.conf",
-    line=f"Architecture = auto {arch_v}",
-    replace=r"^Architecture\s*=.*",
+    line=r"^#*Architecture\s*=.*",
+    replace=f"Architecture = auto {arch_v}",
 )
-files.line(
-    name="Enable multilib repository header",
-    path="/etc/pacman.conf",
-    line="[multilib]",
-    replace=r"^#\[multilib\]",
-)
-files.line(
-    name="Enable multilib repository include",
-    path="/etc/pacman.conf",
-    line="Include = /etc/pacman.d/mirrorlist",
-    replace=r"^#Include\s*=\s*/etc/pacman.d/mirrorlist",
+server.shell(
+    name="Enable multilib repository in /etc/pacman.conf",
+    commands=[
+        "sed -i '/\\[multilib\\]/,/Include/s/^#//' /etc/pacman.conf"
+    ],
 )
 
 # CachyOS & LizardByte Repositories block
@@ -164,8 +158,6 @@ files.block(
     name="Ensure CachyOS repositories in /etc/pacman.conf",
     path="/etc/pacman.conf",
     content=cachy_block.strip(),
-    line=r"^\[core\]",
-    before=True,
 )
 
 files.block(

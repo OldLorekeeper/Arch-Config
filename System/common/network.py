@@ -21,8 +21,8 @@ files.put(
 files.line(
     name="Enable Bluetooth experimental features",
     path="/etc/bluetooth/main.conf",
-    line="Experimental = true",
-    replace=r"^#*Experimental\s*=.*",
+    line=r"^#*Experimental\s*=.*",
+    replace="Experimental = true",
 )
 
 # 3. Network Dispatchers

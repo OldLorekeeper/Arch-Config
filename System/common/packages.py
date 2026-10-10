@@ -24,7 +24,7 @@ COMMON_PACKAGES = [
     "npm", "nss-mdns", "obsidian", "papirus-icon-theme", "protontricks", "protonup-qt",
     "qemu-desktop", "realtime-privileges", "steam", "tailscale", "transmission-cli", "uv", "vdpauinfo",
     "virt-manager", "vlc", "vlc-plugin-ffmpeg", "vulkan-headers", "wayland-protocols",
-    "wine-staging", "wine-mono", "winetricks", "xpadneo-dkms", "inotify-tools", "novelwriter"
+    "wine-staging", "wine-mono", "winetricks", "xpadneo-dkms", "inotify-tools"
 ]
 
 pacman.packages(
@@ -51,7 +51,7 @@ server.shell(
 # 3. Common AUR Packages
 COMMON_AUR_PACKAGES = [
     "antigravity", "antigravity-cli", "antigravity-ide", "darkly-bin", "geekbench",
-    "google-chrome", "konsave", "kwin-effects-better-blur-dx", "papirus-folders",
+    "google-chrome", "konsave", "kwin-effects-better-blur-dx", "novelwriter", "papirus-folders",
     "plasma6-applets-panel-colorizer", "timeshift-systemd-timer"
 ]
 

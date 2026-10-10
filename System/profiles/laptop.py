@@ -42,21 +42,21 @@ grub_cmdline = "split_lock_detect=off loglevel=3 quiet hugepages=512 i915.enable
 files.line(
     name="Configure GRUB kernel command line for Laptop",
     path="/etc/default/grub",
-    line=f'GRUB_CMDLINE_LINUX_DEFAULT="{grub_cmdline}"',
-    replace=r"^GRUB_CMDLINE_LINUX_DEFAULT=.*",
+    line=r"^GRUB_CMDLINE_LINUX_DEFAULT=.*",
+    replace=f'GRUB_CMDLINE_LINUX_DEFAULT="{grub_cmdline}"',
 )
 files.line(
     name="Set GRUB timeout to 2s",
     path="/etc/default/grub",
-    line="GRUB_TIMEOUT=2",
-    replace=r"^GRUB_TIMEOUT=.*",
+    line=r"^GRUB_TIMEOUT=.*",
+    replace="GRUB_TIMEOUT=2",
 )
 
 files.line(
     name="Set mkinitcpio modules for Intel",
     path="/etc/mkinitcpio.conf",
-    line="MODULES=(i915 nvme)",
-    replace=r"^MODULES=.*",
+    line=r"^MODULES=.*",
+    replace="MODULES=(i915 nvme)",
 )
 
 server.shell(
@@ -138,20 +138,20 @@ systemd.service(
 files.line(
     name="Set TLP Wi-Fi power on battery to off",
     path="/etc/tlp.conf",
-    line="WIFI_PWR_ON_BAT=off",
-    replace=r"^#*WIFI_PWR_ON_BAT=.*",
+    line=r"^#*WIFI_PWR_ON_BAT=.*",
+    replace="WIFI_PWR_ON_BAT=off",
 )
 files.line(
     name="Set TLP PCIe ASPM on battery to default",
     path="/etc/tlp.conf",
-    line="PCIE_ASPM_ON_BAT=default",
-    replace=r"^#*PCIE_ASPM_ON_BAT=.*",
+    line=r"^#*PCIE_ASPM_ON_BAT=.*",
+    replace="PCIE_ASPM_ON_BAT=default",
 )
 files.line(
     name="Set TLP NVMe energy policy on battery to default",
     path="/etc/tlp.conf",
-    line="NVM_ENERGY_PERF_POLICY_ON_BAT=default",
-    replace=r"^#*NVM_ENERGY_PERF_POLICY_ON_BAT=.*",
+    line=r"^#*NVM_ENERGY_PERF_POLICY_ON_BAT=.*",
+    replace="NVM_ENERGY_PERF_POLICY_ON_BAT=default",
 )
 
 systemd.service(
