@@ -138,7 +138,7 @@ files.line(
 files.line(
     name="Set mkinitcpio compression to lz4",
     path="/etc/mkinitcpio.conf",
-    line=r"^#*COMPRESSION=.*",
+    line=r"^COMPRESSION=.*",
     replace='COMPRESSION="lz4"',
 )
 

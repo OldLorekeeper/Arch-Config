@@ -62,7 +62,7 @@ files.line(
 server.shell(
     name="Ensure numlock hook in mkinitcpio.conf",
     commands=[
-        "grep -q 'numlock' /etc/mkinitcpio.conf || sed -i 's/HOOKS=(\\(.*\\))/HOOKS=(\\1 numlock)/' /etc/mkinitcpio.conf"
+        "grep -q '^HOOKS=.*numlock' /etc/mkinitcpio.conf || sed -i 's/^HOOKS=(\\(.*\\))/HOOKS=(\\1 numlock)/' /etc/mkinitcpio.conf"
     ],
 )
 
