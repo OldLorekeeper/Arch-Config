@@ -54,15 +54,16 @@ files.put(
     mode="0440",
 )
 
-# 4. Games Directory
-files.directory(
-    name="Ensure Games directory exists",
-    path=f"/home/{target_user}/Games",
-    user=target_user,
-    group=target_user,
-    mode="0755",
-    present=True,
-)
+# 4. User Core Directories
+for dir_name in ["Games", "Projects", "Obsidian", ".local/bin"]:
+    files.directory(
+        name=f"Ensure user directory {dir_name} exists",
+        path=f"/home/{target_user}/{dir_name}",
+        user=target_user,
+        group=target_user,
+        mode="0755",
+        present=True,
+    )
 
 # 5. Git Global Identity
 git_name = cfg.get("GIT_NAME") or "OldLorekeeper"

@@ -12,7 +12,7 @@ TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
 DESKTOP_PACKAGES = [
     "amd-ucode", "cachyos-v4-mirrorlist", "scx-scheds", "scx-tools", "vulkan-radeon",
     "lib32-vulkan-radeon", "rocm-hip-runtime", "rocm-opencl-runtime",
-    "cronie", "ffmpeg", "jellyfin-server", "jellyfin-web", "lutris", "solaar", "yt-dlp",
+    "ffmpeg", "jellyfin-server", "jellyfin-web", "lutris", "solaar", "yt-dlp",
 ]
 
 pacman.packages(
@@ -142,14 +142,19 @@ files.line(
 )
 
 # 6. Sunshine Game Streaming
-server.shell(
-    name="Symlink Sunshine helper scripts to /usr/local/bin",
-    commands=[
-        f"""for script in sunshine_gpu_boost.zsh sunshine_hdr.zsh sunshine_res.zsh sunshine_laptop.zsh sunshine_configure.zsh sunshine_pixel.zsh; do
-            [[ -f "{repo_dir}/Scripts/Sunshine/$script" ]] && ln -sf "{repo_dir}/Scripts/Sunshine/$script" "/usr/local/bin/${{script:r}}" && chmod +x "{repo_dir}/Scripts/Sunshine/$script"
-        done"""
-    ],
-)
+for script in [
+    "sunshine_gpu_boost.zsh", "sunshine_hdr.zsh", "sunshine_res.zsh",
+    "sunshine_laptop.zsh", "sunshine_configure.zsh", "sunshine_pixel.zsh"
+]:
+    script_path = Path(repo_dir) / "Scripts" / "Sunshine" / script
+    if script_path.exists():
+        bin_name = script.removesuffix(".zsh")
+        files.link(
+            name=f"Symlink Sunshine helper {bin_name} to /usr/local/bin",
+            path=f"/usr/local/bin/{bin_name}",
+            target=str(script_path),
+            symbolic=True,
+        )
 
 sunshine_icons_script = f"""#!/bin/bash
 shopt -s nullglob
@@ -228,10 +233,15 @@ files.put(
     src=StringIO("d /dev/shm/jellyfin 0755 jellyfin jellyfin -\n"),
 )
 
+files.directory(
+    name="Ensure /var/lib/jellyfin directory exists",
+    path="/var/lib/jellyfin",
+    present=True,
+)
+
 server.shell(
-    name="Ensure jellyfin user permissions and directories",
+    name="Ensure jellyfin user permissions and nocow attribute",
     commands=[
-        "mkdir -p /var/lib/jellyfin",
         "chattr +C /var/lib/jellyfin 2>/dev/null || true",
         "id -u jellyfin &>/dev/null && usermod -aG render,video jellyfin || true",
     ],
@@ -275,7 +285,7 @@ server.shell(
     ],
 )
 
-# Media Optimizer Cronjob
+# Media Optimizer Systemd Service & Timer
 files.link(
     name="Symlink media_optimizer script",
     path="/usr/local/bin/media_optimizer",
@@ -283,17 +293,43 @@ files.link(
     symbolic=True,
 )
 
+files.put(
+    name="Install media-optimizer.service",
+    dest="/etc/systemd/system/media-optimizer.service",
+    src=str(TEMPLATES_DIR / "systemd" / "media-optimizer.service"),
+)
+
+files.put(
+    name="Install media-optimizer.timer",
+    dest="/etc/systemd/system/media-optimizer.timer",
+    src=str(TEMPLATES_DIR / "systemd" / "media-optimizer.timer"),
+)
+
+systemd.service(
+    name="Enable media-optimizer.timer",
+    service="media-optimizer.timer",
+    enabled=True,
+)
+
+# Clean legacy cronjob if present
 server.shell(
-    name="Configure media_optimizer cronjob",
+    name="Remove obsolete media_optimizer cronjob",
     commands=[
-        f'sudo -u {target_user} bash -c \'(crontab -l 2>/dev/null | grep -v "media_optimizer"; echo "0 1 * * * /usr/local/bin/media_optimizer > /tmp/media_optimizer.log 2>&1") | crontab -\''
+        f'sudo -u {target_user} bash -c \'crontab -l 2>/dev/null | grep -v "media_optimizer" | crontab - 2>/dev/null || true\''
     ],
 )
 
-for svc in ["jellyfin", "transmission-daemon", "sonarr", "radarr", "prowlarr", "seerr", "cronie"]:
+for svc in ["jellyfin", "transmission-daemon", "sonarr", "radarr", "prowlarr", "seerr"]:
     systemd.service(
         name=f"Enable desktop media service {svc}",
         service=svc,
+        enabled=True,
+    )
+
+if Path("/mnt/Media").is_mount():
+    systemd.service(
+        name="Enable btrfs scrub timer for /mnt/Media",
+        service="btrfs-scrub@mnt-Media.timer",
         enabled=True,
     )
 

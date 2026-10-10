@@ -77,16 +77,28 @@ server.shell(
     ],
 )
 
-server.shell(
-    name="Configure grub-btrfsd timeshift integration",
-    commands=[
+files.directory(
+    name="Ensure grub-btrfsd service drop-in directory exists",
+    path="/etc/systemd/system/grub-btrfsd.service.d",
+    present=True,
+)
 
-        """if [[ -f /usr/lib/systemd/system/grub-btrfsd.service ]]; then
-            cp /usr/lib/systemd/system/grub-btrfsd.service /etc/systemd/system/grub-btrfsd.service
-            sed -i 's|^ExecStart=.*|ExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto|' /etc/systemd/system/grub-btrfsd.service
-            systemctl enable grub-btrfsd
-        fi"""
-    ],
+files.put(
+    name="Configure grub-btrfsd timeshift drop-in override",
+    dest="/etc/systemd/system/grub-btrfsd.service.d/override.conf",
+    src=StringIO("[Service]\nExecStart=\nExecStart=/usr/bin/grub-btrfsd --syslog --timeshift-auto\n"),
+)
+
+files.file(
+    name="Remove obsolete full-file grub-btrfsd service",
+    path="/etc/systemd/system/grub-btrfsd.service",
+    present=False,
+)
+
+systemd.service(
+    name="Enable grub-btrfsd daemon",
+    service="grub-btrfsd",
+    enabled=True,
 )
 
 # 7. Common Timers & Services

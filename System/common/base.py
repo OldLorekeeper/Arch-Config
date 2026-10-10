@@ -85,6 +85,12 @@ files.line(
     path="/etc/makepkg.conf",
     line='RUSTFLAGS="-C target-cpu=native"',
 )
+files.line(
+    name="Tune makepkg build directory to tmpfs",
+    path="/etc/makepkg.conf",
+    line="BUILDDIR=/tmp/makepkg",
+    replace=r"^#*BUILDDIR=.*",
+)
 
 # 5. Pacman & CachyOS Repositories
 parallel_dl = "10" if profile == "desktop" else "5"
@@ -107,6 +113,18 @@ files.line(
     path="/etc/pacman.conf",
     line=f"Architecture = auto {arch_v}",
     replace=r"^Architecture\s*=.*",
+)
+files.line(
+    name="Enable multilib repository header",
+    path="/etc/pacman.conf",
+    line="[multilib]",
+    replace=r"^#\[multilib\]",
+)
+files.line(
+    name="Enable multilib repository include",
+    path="/etc/pacman.conf",
+    line="Include = /etc/pacman.d/mirrorlist",
+    replace=r"^#Include\s*=\s*/etc/pacman.d/mirrorlist",
 )
 
 # CachyOS & LizardByte Repositories block

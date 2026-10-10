@@ -1,0 +1,7 @@
+[Unit]
+Description=Media Optimizer Daily Maintenance
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/media_optimizer

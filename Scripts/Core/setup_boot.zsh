@@ -50,10 +50,15 @@ if [[ "$DEVICE_PROFILE" == "desktop" ]] && (( $+commands[kscreen-doctor] )); the
         read "MON_ID?Monitor ID (e.g. DP-1): "
         read "STREAM_IDX?Target Stream Mode Index: "
         read "DEFAULT_IDX?Default Mode Index: "
-        for script in sunshine_hdr.zsh sunshine_res.zsh sunshine_laptop.zsh; do
-            [[ -f "$REPO_DIR/Scripts/Sunshine/$script" ]] && sed -i -e "s/^MONITOR=.*/MONITOR=\"$MON_ID\"/" -e "s/^STREAM_MODE=.*/STREAM_MODE=\"$STREAM_IDX\"/" -e "s/^DEFAULT_MODE=.*/DEFAULT_MODE=\"$DEFAULT_IDX\"/" "$REPO_DIR/Scripts/Sunshine/$script"
-            print -P "%F{green}Updated variables in $script%f"
-        done
+        CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/sunshine"
+        mkdir -p "$CONFIG_DIR"
+        cat <<EOF > "$CONFIG_DIR/display.env"
+SUNSHINE_MONITOR="$MON_ID"
+SUNSHINE_STREAM_MODE="$STREAM_IDX"
+SUNSHINE_DEFAULT_MODE="$DEFAULT_IDX"
+SUNSHINE_LAPTOP_MODE="13"
+EOF
+        print -P "%F{green}Saved configuration to $CONFIG_DIR/display.env%f"
      fi
 fi
 # endregion

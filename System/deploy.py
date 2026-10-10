@@ -17,33 +17,51 @@ cfg = get_config()
 profile = cfg["DEVICE_PROFILE"]
 target_user = cfg["TARGET_USER"]
 
+def stage_milestone(stage_num: int, total_stages: int, title: str):
+    server.shell(
+        name=f"[Stage {stage_num}/{total_stages}] {title}",
+        commands=[
+            f"printf '\\n\\033[1;34m====================================================================\\033[0m\\n' && "
+            f"printf '\\033[1;32m==> [STAGE {stage_num}/{total_stages}] {title.upper()}\\033[0m\\n' && "
+            f"printf '\\033[1;34m====================================================================\\033[0m\\n\\n'"
+        ],
+    )
+
 server.shell(
     name=f"Starting deployment for {profile.upper()} profile ({target_user})",
     commands=[f"echo '==> Deploying {profile} profile for user {target_user}'"],
 )
 
 # 1. Base Configuration (Locale, Hosts, Makepkg, Pacman)
+stage_milestone(1, 8, "Base System, Locales & Repositories")
 import System.common.base
 
 # 2. Users, Groups, and Sudoers
+stage_milestone(2, 8, "User Accounts, Groups & Sudo Policies")
 import System.common.users
 
 # 3. Network, iwd, Dispatchers
+stage_milestone(3, 8, "Network, Wi-Fi Backend & Dispatchers")
 import System.common.network
 
 # 4. Common Packages (Pacman, Yay, AUR)
+stage_milestone(4, 8, "Core Packages & AUR Helper")
 import System.common.packages
 
 # 5. Kernel, Boot, Sysctl, ZRAM
+stage_milestone(5, 8, "Kernel, Bootloader, Sysctl & ZRAM")
 import System.common.kernel_boot
 
 # 6. Theming, Dotfiles, Antigravity Sync, KWin
+stage_milestone(6, 8, "Desktop Theming, Dotfiles & Plasma Assets")
 import System.common.theming
 
 # 7. Pacman Transaction Hooks
+stage_milestone(7, 8, "Pacman Transaction Hooks")
 import System.common.hooks
 
 # 8. Profile-Specific Hardware Logic
+stage_milestone(8, 8, f"Hardware Profile Optimisations ({profile.upper()})")
 if profile == "desktop":
     import System.profiles.desktop
 elif profile == "laptop":
@@ -53,7 +71,7 @@ else:
 
 # 9. Final Regeneration (mkinitcpio & GRUB)
 server.shell(
-    name="Regenerate initramfs and GRUB config",
+    name="[Completion] Regenerate initramfs and GRUB config",
     commands=[
         "mkinitcpio -P",
         "grub-mkconfig -o /boot/grub/grub.cfg",
@@ -62,7 +80,7 @@ server.shell(
 
 # 10. Clean Up Sensitive Installation Variables
 server.shell(
-    name="Clean up temporary installation variables",
+    name="[Completion] Clean up temporary installation variables",
     commands=[
         "rm -f /install_vars.json /install_vars.zsh 2>/dev/null || true"
     ],

@@ -340,7 +340,7 @@ CORE_PKGS=(
 DESKTOP_PKGS=(
     "amd-ucode" "cachyos-v4-mirrorlist" "scx-scheds" "scx-tools" "vulkan-radeon"
     "lib32-vulkan-radeon" "rocm-hip-runtime" "rocm-opencl-runtime"
-    "cronie" "ffmpeg" "jellyfin-server" "jellyfin-web" "lutris" "solaar" "yt-dlp"
+    "ffmpeg" "jellyfin-server" "jellyfin-web" "lutris" "solaar" "yt-dlp"
 )
 
 LAPTOP_PKGS=(

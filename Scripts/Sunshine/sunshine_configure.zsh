@@ -53,23 +53,30 @@ read "STREAM_IDX?Value: "
 print -P "%F{yellow}Enter Default Desktop Mode Index:%f"
 print -P "%F{cyan}ℹ e.g. 1%f\n"
 read "DEFAULT_IDX?Value: "
+
+print -P "%F{yellow}Enter Laptop Streaming Mode Index [default: 13]:%f"
+read "LAPTOP_IDX?Value: "
+LAPTOP_IDX=${LAPTOP_IDX:-13}
 # endregion
 
 # ------------------------------------------------------------------------------
 # 3. Configuration
 # ------------------------------------------------------------------------------
 
-# Purpose: Apply variables to target scripts using sed.
+# Purpose: Save variables to untracked display.env file.
 
 # region 3. Configuration
 print -P "\n%K{blue}%F{black} 3. CONFIGURATION %k%f\n"
 if [[ -n "$MON_ID" && -n "$STREAM_IDX" && -n "$DEFAULT_IDX" ]]; then
-    for file in "$HDR_SCRIPT" "$RES_SCRIPT" "$LAPTOP_SCRIPT"; do
-        sed -i 's/^MONITOR=.*/MONITOR="'"$MON_ID"'"/' "$file"
-        sed -i 's/^STREAM_MODE=.*/STREAM_MODE="'"$STREAM_IDX"'"/' "$file"
-        sed -i 's/^DEFAULT_MODE=.*/DEFAULT_MODE="'"$DEFAULT_IDX"'"/' "$file"
-        print "Updated: ${file:t}"
-    done
+    CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/sunshine"
+    mkdir -p "$CONFIG_DIR"
+    cat <<EOF > "$CONFIG_DIR/display.env"
+SUNSHINE_MONITOR="$MON_ID"
+SUNSHINE_STREAM_MODE="$STREAM_IDX"
+SUNSHINE_DEFAULT_MODE="$DEFAULT_IDX"
+SUNSHINE_LAPTOP_MODE="$LAPTOP_IDX"
+EOF
+    print -P "Configuration saved to: %F{cyan}$CONFIG_DIR/display.env%f"
     print -P "Status: %F{green}Configuration complete%f"
 else
     print -P "%F{red}Error: Missing input.%f"

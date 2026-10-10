@@ -171,7 +171,7 @@ if [[ "$PROFILE_TYPE" == "Desktop" ]]; then
     TARGET_SERVICES+=(
         "jellyfin" "transmission-daemon" "sonarr" "radarr"
         "prowlarr" "lactd" "seerr"
-        "btrfs-scrub@mnt-Media.timer"
+        "btrfs-scrub@mnt-Media.timer" "media-optimizer.timer"
     )
     TARGET_USER_SERVICES=(
         "sunshine" "trawl"

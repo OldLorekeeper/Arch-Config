@@ -18,9 +18,12 @@ print -P "\n%K{green}%F{black} STARTING HDR SWITCHER %k%f\n"
 
 # region 1. Configuration
 print -P "%K{blue}%F{black} 1. CONFIGURATION %k%f\n"
-MONITOR="DP-2"
-STREAM_MODE="7"
-DEFAULT_MODE="1"
+CONFIG_ENV="${XDG_CONFIG_HOME:-$HOME/.config}/sunshine/display.env"
+[[ -f "$CONFIG_ENV" ]] && source "$CONFIG_ENV"
+
+MONITOR="${SUNSHINE_MONITOR:-DP-2}"
+STREAM_MODE="${SUNSHINE_STREAM_MODE:-7}"
+DEFAULT_MODE="${SUNSHINE_DEFAULT_MODE:-1}"
 print -P "Monitor: %F{cyan}$MONITOR%f"
 print -P "Stream Mode: %F{cyan}$STREAM_MODE%f"
 print -P "Default Mode: %F{cyan}$DEFAULT_MODE%f"

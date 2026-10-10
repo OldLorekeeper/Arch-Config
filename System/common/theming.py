@@ -32,9 +32,9 @@ server.shell(
     commands=[
         f"""TRANS_ARCHIVE="{repo_dir}/Resources/Plasmoids/transmission-plasmoid.tar.gz"
         if [[ -f "$TRANS_ARCHIVE" ]]; then
-            TRANS_DIR="/home/{target_user}/.local/share/plasma/plasmoids/com.oldlorekeeper.transmission"
-            mkdir -p "$TRANS_DIR"
-            tar -xf "$TRANS_ARCHIVE" -C "${{TRANS_DIR:h}}"
+            PLASMOIDS_DIR="/home/{target_user}/.local/share/plasma/plasmoids"
+            mkdir -p "$PLASMOIDS_DIR"
+            tar -xf "$TRANS_ARCHIVE" -C "$PLASMOIDS_DIR"
             chown -R {target_user}:{target_user} "/home/{target_user}/.local/share/plasma"
         fi"""
     ],
@@ -50,14 +50,15 @@ server.shell(
     name="Apply custom Kate icons to Papirus theme",
     commands=[
         f"""find /usr/share/icons/Papirus -type f \\( -name "kate.svg" -o -name "kate-symbolic.svg" -o -name "kate2.svg" -o -name "org.kde.kate.svg" \\) | while read -r icon; do
-            [[ -f "{repo_dir}/Resources/Icons/Kate/${{icon:t}}" ]] && cp -f "{repo_dir}/Resources/Icons/Kate/${{icon:t}}" "$icon"
+            icon_name=$(basename "$icon")
+            [[ -f "{repo_dir}/Resources/Icons/Kate/$icon_name" ]] && cp -f "{repo_dir}/Resources/Icons/Kate/$icon_name" "$icon"
         done"""
     ],
 )
 
 # 4. ZSH Plugins & Links
 server.shell(
-    name="Install Oh My Zsh plugins and link zshrc",
+    name="Install Oh My Zsh and plugins",
     commands=[
         f"""if [[ ! -d "/home/{target_user}/.oh-my-zsh" ]]; then
             sudo -u {target_user} git clone https://github.com/ohmyzsh/ohmyzsh.git "/home/{target_user}/.oh-my-zsh" || true
@@ -66,14 +67,32 @@ server.shell(
         mkdir -p "$ZSH_CUSTOM/plugins"
         [[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]] && sudo -u {target_user} git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions" || true
         [[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]] && sudo -u {target_user} git clone https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" || true
-
-        ln -sf "/home/{target_user}/.oh-my-zsh" /root/.oh-my-zsh
-        rm -f "/home/{target_user}/.zshrc"
-        ln -sf "{repo_dir}/Resources/zshrc/zshrc_{profile}" "/home/{target_user}/.zshrc"
-        ln -sf "/home/{target_user}/.zshrc" /root/.zshrc
-        chown -R {target_user}:{target_user} "/home/{target_user}/.oh-my-zsh" "/home/{target_user}/.zshrc"
+        chown -R {target_user}:{target_user} "/home/{target_user}/.oh-my-zsh"
         """
     ],
+)
+
+files.link(
+    name="Link root .oh-my-zsh to user .oh-my-zsh",
+    path="/root/.oh-my-zsh",
+    target=f"/home/{target_user}/.oh-my-zsh",
+    symbolic=True,
+)
+
+files.link(
+    name=f"Link user .zshrc to {profile} profile",
+    path=f"/home/{target_user}/.zshrc",
+    target=f"{repo_dir}/Resources/zshrc/zshrc_{profile}",
+    symbolic=True,
+    user=target_user,
+    group=target_user,
+)
+
+files.link(
+    name="Link root .zshrc to user .zshrc",
+    path="/root/.zshrc",
+    target=f"/home/{target_user}/.zshrc",
+    symbolic=True,
 )
 
 # 5. Antigravity Dual-Tier Topology Sync
@@ -87,29 +106,33 @@ server.shell(
 )
 
 # 6. KDE Resource Directories
-server.shell(
-    name="Ensure KDE local share directories exist",
-    commands=[
-        f'mkdir -p "/home/{target_user}/.local/share/"{{icons,kxmlgui5,plasma,color-schemes,aurorae,fonts,wallpapers}}',
-        f'chown -R {target_user}:{target_user} "/home/{target_user}/.local/share"',
-    ],
-)
+for d in ["icons", "kxmlgui5", "plasma", "color-schemes", "aurorae", "fonts", "wallpapers"]:
+    files.directory(
+        name=f"Ensure KDE directory ~/.local/share/{d} exists",
+        path=f"/home/{target_user}/.local/share/{d}",
+        user=target_user,
+        group=target_user,
+        mode="0755",
+        present=True,
+    )
 
 # 7. Apply Konsave Profile
 if str(cfg.get("APPLY_KONSAVE", "true")).lower() == "true":
-    server.shell(
-        name="Apply latest Konsave theme profile",
-        commands=[
-            f"""if command -v konsave &>/dev/null; then
-                PROFILE_DIR="{repo_dir}/Resources/Konsave"
-                [[ "{profile}" == "desktop" ]] && LATEST_KNSV=$(ls -t "$PROFILE_DIR"/Desktop*.knsv 2>/dev/null | head -n1) || LATEST_KNSV=$(ls -t "$PROFILE_DIR"/Laptop*.knsv 2>/dev/null | head -n1)
-                if [[ -n "$LATEST_KNSV" && -f "$LATEST_KNSV" ]]; then
-                    sudo -u {target_user} konsave -i "$LATEST_KNSV" --force 2>/dev/null || true
-                    sudo -u {target_user} konsave -a "${{LATEST_KNSV:t:r}}" 2>/dev/null || true
-                fi
-            fi"""
-        ],
-    )
+    profile_dir = Path(repo_dir) / "Resources" / "Konsave"
+    prefix = "Desktop" if profile == "desktop" else "Laptop"
+    knsv_files = sorted(profile_dir.glob(f"{prefix}*.knsv"), key=lambda p: p.stat().st_mtime, reverse=True)
+    if knsv_files:
+        latest_knsv = knsv_files[0]
+        profile_name = latest_knsv.stem
+        server.shell(
+            name=f"Apply latest Konsave theme profile ({profile_name})",
+            commands=[
+                f"""if command -v konsave &>/dev/null; then
+                    sudo -u {target_user} konsave -i "{latest_knsv}" --force 2>/dev/null || true
+                    sudo -u {target_user} konsave -a "{profile_name}" 2>/dev/null || true
+                fi"""
+            ],
+        )
 
 # 8. Apply KWin Rules
 server.shell(
