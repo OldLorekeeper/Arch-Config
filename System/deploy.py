@@ -78,11 +78,12 @@ server.shell(
     ],
 )
 
-# 10. Clean Up Sensitive Installation Variables
+# 10. Clean Up Sensitive Installation Variables and Temporary Sudo Rules
 server.shell(
-    name="[Completion] Clean up temporary installation variables",
+    name="[Completion] Clean up temporary installation variables and temporary sudo rules",
     commands=[
-        "rm -f /install_vars.json /install_vars.zsh 2>/dev/null || true"
+        "rm -f /install_vars.json /install_vars.zsh 2>/dev/null || true",
+        "rm -f /etc/sudoers.d/zz_temp_yay /etc/sudoers.d/99_*_temp_yay 2>/dev/null || true",
     ],
 )
 

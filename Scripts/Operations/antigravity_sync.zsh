@@ -1,1 +1,1 @@
-../../../Secrets/Scripts/antigravity_sync.zsh
+/home/curtis/Obsidian/Secrets/Scripts/antigravity_sync.zsh

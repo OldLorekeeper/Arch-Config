@@ -43,7 +43,10 @@ files.put(
 # Apply sysctl settings immediately
 server.shell(
     name="Apply sysctl settings",
-    commands=["sysctl --system"],
+    commands=[
+        "modprobe sch_fq 2>/dev/null || true",
+        "sysctl --system || true",
+    ],
 )
 
 # 4. ZRAM Generator

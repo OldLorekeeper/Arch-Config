@@ -25,7 +25,7 @@ LAPTOP_AUR_PACKAGES = ["mkinitcpio-numlock", "thermald"]
 server.shell(
     name="Install laptop AUR packages via yay",
     commands=[
-        f"sudo -u {target_user} yay -S --needed --noconfirm {' '.join(LAPTOP_AUR_PACKAGES)}"
+        f"sudo -u {target_user} yay -S --needed --noconfirm --sudoloop=false {' '.join(LAPTOP_AUR_PACKAGES)}"
     ],
 )
 

@@ -1,1 +1,1 @@
-../../../Secrets/Scripts/config_watch.zsh
+/home/curtis/Obsidian/Secrets/Scripts/config_watch.zsh

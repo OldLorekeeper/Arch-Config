@@ -28,7 +28,7 @@ DESKTOP_AUR_PACKAGES = [
 server.shell(
     name="Install desktop AUR packages via yay",
     commands=[
-        f"sudo -u {target_user} yay -S --needed --noconfirm {' '.join(DESKTOP_AUR_PACKAGES)}"
+        f"sudo -u {target_user} yay -S --needed --noconfirm --sudoloop=false {' '.join(DESKTOP_AUR_PACKAGES)}"
     ],
 )
 

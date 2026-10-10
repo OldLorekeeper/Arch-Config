@@ -14,8 +14,11 @@ COMMON_PACKAGES = [
     "wireless-regdb", "zram-generator", "zsh",
     "ark", "bluedevil", "dolphin", "kate", "kinfocenter", "konsole", "kscreen",
     "kwallet-pam", "mesa", "partitionmanager", "pipewire", "pipewire-alsa",
-    "pipewire-pulse", "plasma-login-manager", "plasma-meta", "plasma-nm", "plasma-pa", "plasma-systemmonitor",
-    "powerdevil", "spectacle", "wireplumber",
+    "pipewire-pulse", "plasma-desktop", "plasma-disks", "plasma-login-manager",
+    "plasma-nm", "plasma-pa", "plasma-systemmonitor", "powerdevil", "spectacle", "wireplumber",
+    "flatpak-kcm", "kde-gtk-config", "kdeplasma-addons", "krdp", "kwrited",
+    "oxygen", "oxygen-sounds", "plasma-browser-integration", "plasma-firewall",
+    "plasma-thunderbolt", "plasma-vault", "plasma-welcome", "print-manager",
     "7zip", "bash-language-server", "chromium", "cmake", "cmake-extras", "cpupower",
     "cups", "dkms", "dnsmasq", "dosfstools", "edk2-ovmf", "ethtool", "extra-cmake-modules", "ghostscript",
     "fastfetch", "fwupd", "gamemode", "gamescope", "gwenview", "hunspell-en_gb",
@@ -33,7 +36,16 @@ pacman.packages(
     present=True,
 )
 
-# 2. Bootstrap yay AUR helper if missing
+# 2. Temporary Sudoers Drop-in for Non-Interactive AUR Bootstrap & Installation
+server.shell(
+    name="Grant temporary non-interactive sudo for AUR build",
+    commands=[
+        f'echo "{target_user} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/zz_temp_yay',
+        'chmod 0440 /etc/sudoers.d/zz_temp_yay',
+    ],
+)
+
+# 3. Bootstrap yay AUR helper if missing
 server.shell(
     name="Bootstrap yay AUR helper if not installed",
     commands=[
@@ -48,25 +60,24 @@ server.shell(
     ],
 )
 
-# 3. Common AUR Packages
+# 4. Common AUR Packages
 COMMON_AUR_PACKAGES = [
     "antigravity", "antigravity-cli", "antigravity-ide", "darkly-bin", "geekbench",
-    "google-chrome", "konsave", "kwin-effects-better-blur-dx", "novelwriter", "papirus-folders",
+    "google-chrome", "konsave", "kwin-effects-better-blur-dx", "novelwriter-bin", "papirus-folders",
     "plasma6-applets-panel-colorizer", "timeshift-systemd-timer"
 ]
 
 server.shell(
     name="Install common AUR packages via yay",
     commands=[
-        f"sudo -u {target_user} yay -S --needed --noconfirm {' '.join(COMMON_AUR_PACKAGES)}"
+        f"sudo -u {target_user} yay -S --needed --noconfirm --sudoloop=false {' '.join(COMMON_AUR_PACKAGES)}"
     ],
 )
 
-# 4. Plasma Meta & Discover Cleanup
+# 5. Purge Discover (KDE is installed modularly without plasma-meta)
 server.shell(
-    name="Purge discover and decouple plasma-meta",
+    name="Purge discover if present",
     commands=[
-        "pacman -Qi plasma-meta &>/dev/null && (pacman -R --noconfirm plasma-meta; pacman -D --asexplicit plasma-desktop) || true",
         "pacman -Qi discover &>/dev/null && pacman -Rns --noconfirm discover || true",
     ],
 )

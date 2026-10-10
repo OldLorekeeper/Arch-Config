@@ -158,11 +158,13 @@ files.block(
     name="Ensure CachyOS repositories in /etc/pacman.conf",
     path="/etc/pacman.conf",
     content=cachy_block.strip(),
+    marker="# {mark} CACHYOS REPOSITORIES",
 )
 
 files.block(
     name="Ensure LizardByte repository in /etc/pacman.conf",
     path="/etc/pacman.conf",
     content=lizardbyte_block.strip(),
+    marker="# {mark} LIZARDBYTE REPOSITORY",
 )
 
