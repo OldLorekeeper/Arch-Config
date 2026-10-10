@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from pathlib import Path
 
 # Paths
@@ -61,10 +62,38 @@ def get_config():
             hostname = "NCC-1701"
     cfg["HOSTNAME"] = hostname
 
+    # Dynamic EDID and Monitor Port Discovery
+    edid_enable = cfg.get("EDID_ENABLE") or os.environ.get("EDID_ENABLE")
+    monitor_port = cfg.get("MONITOR_PORT") or os.environ.get("MONITOR_PORT")
+
+    # Inspect /etc/default/grub if not explicitly set
+    grub_file = Path("/etc/default/grub")
+    if grub_file.exists() and (not edid_enable or not monitor_port):
+        try:
+            grub_text = grub_file.read_text()
+            match = re.search(r"drm\.edid_firmware=([^:]+):edid/custom_sunshine\.bin", grub_text)
+            if match:
+                if not edid_enable:
+                    edid_enable = "true"
+                if not monitor_port:
+                    monitor_port = match.group(1)
+        except Exception:
+            pass
+
+    # Desktop profile heuristic fallback
+    if profile == "desktop":
+        custom_edid = Path("/usr/lib/firmware/edid/custom_sunshine.bin")
+        repo_edid = REPO_DIR / "Resources" / "Sunshine" / "custom_sunshine.bin"
+        if (custom_edid.exists() or repo_edid.exists()) and not edid_enable:
+            edid_enable = "true"
+        if not monitor_port:
+            monitor_port = "DP-2"
+
+    cfg["EDID_ENABLE"] = str(edid_enable if edid_enable is not None else "false").lower()
+    cfg["MONITOR_PORT"] = monitor_port or ""
+
     # Defaults for other variables
     cfg.setdefault("MEDIA_UUID", "")
-    cfg.setdefault("MONITOR_PORT", "")
-    cfg.setdefault("EDID_ENABLE", "false")
     cfg.setdefault("APPLY_KONSAVE", "true")
     cfg.setdefault("GIT_NAME", "")
     cfg.setdefault("GIT_EMAIL", "")

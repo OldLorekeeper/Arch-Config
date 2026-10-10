@@ -42,7 +42,7 @@ files.put(
 files.put(
     name="Configure /etc/vconsole.conf",
     dest="/etc/vconsole.conf",
-    src=StringIO("KEYMAP=uk\n"),
+    src=StringIO("KEYMAP=uk\nXKBLAYOUT=gb\nXKBMODEL=pc105\nXKBOPTIONS=terminate:ctrl_alt_bksp\n"),
 )
 
 # 3. Hostname & Hosts
@@ -62,11 +62,26 @@ files.put(
 )
 
 # 4. Makepkg Tuning
+server.shell(
+    name="Normalize multiline CFLAGS in /etc/makepkg.conf",
+    commands=[
+        r"""python3 -c '
+from pathlib import Path
+import re
+p = Path("/etc/makepkg.conf")
+if p.exists():
+    content = p.read_text()
+    new_content = re.sub(r"^#*CFLAGS=\".*?(?<!\\)\"", "CFLAGS=\"-march=native -O2 -pipe -fno-plt -fexceptions -Wp,-D_FORTIFY_SOURCE=3 -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer\"", content, flags=re.MULTILINE | re.DOTALL)
+    if new_content != content:
+        p.write_text(new_content)
+'"""
+    ],
+)
 files.line(
     name="Tune makepkg native architecture",
     path="/etc/makepkg.conf",
     line=r"^#*CFLAGS=.*",
-    replace='CFLAGS="-march=native -O2 -pipe -fno-plt -fexceptions -Wp,-D_FORTIFY_SOURCE=3 -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection"',
+    replace='CFLAGS="-march=native -O2 -pipe -fno-plt -fexceptions -Wp,-D_FORTIFY_SOURCE=3 -Wformat -Werror=format-security -fstack-clash-protection -fcf-protection -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer"',
 )
 files.line(
     name="Tune makepkg multi-core flags",
@@ -153,6 +168,27 @@ lizardbyte_block = """
 SigLevel = Optional
 Server = https://github.com/LizardByte/pacman-repo/releases/latest/download
 """
+
+server.shell(
+    name="Normalize existing CachyOS and LizardByte repository blocks in /etc/pacman.conf",
+    commands=[
+        r"""python3 -c '
+from pathlib import Path
+import re
+p = Path("/etc/pacman.conf")
+if p.exists():
+    text = p.read_text()
+    parts = re.split(r"(# BEGIN (?:CACHYOS REPOSITORIES|LIZARDBYTE REPOSITORY))", text, maxsplit=1)
+    unmanaged = parts[0]
+    managed = "".join(parts[1:]) if len(parts) > 1 else ""
+    unmanaged = re.sub(r"\[lizardbyte\][^\[]*", "", unmanaged, flags=re.MULTILINE)
+    unmanaged = re.sub(r"\[cachyos(?:-[^\]]+)?\][^\[]*", "", unmanaged, flags=re.MULTILINE)
+    new_text = unmanaged.rstrip() + "\n\n" + managed.lstrip()
+    if new_text != text:
+        p.write_text(new_text)
+'"""
+    ],
+)
 
 files.block(
     name="Ensure CachyOS repositories in /etc/pacman.conf",

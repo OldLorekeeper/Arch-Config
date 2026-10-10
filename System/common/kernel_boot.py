@@ -81,8 +81,19 @@ server.shell(
 server.shell(
     name="Ensure GRUB EFI bootloader is installed",
     commands=[
-        """if [[ ! -f /efi/EFI/GRUB/grubx64.efi ]]; then
-            grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB
+        """EFI_DIR=""
+        if mountpoint -q /efi || [[ -d /efi/EFI ]]; then
+            EFI_DIR="/efi"
+        elif mountpoint -q /boot/efi || [[ -d /boot/efi/EFI ]]; then
+            EFI_DIR="/boot/efi"
+        elif [[ -d /boot/EFI ]]; then
+            EFI_DIR="/boot"
+        fi
+
+        if [[ -n "$EFI_DIR" ]]; then
+            if [[ ! -f "$EFI_DIR/EFI/GRUB/grubx64.efi" && ! -f "$EFI_DIR/EFI/BOOT/BOOTX64.EFI" && ! -f "$EFI_DIR/EFI/BOOT/bootx64.efi" ]]; then
+                grub-install --target=x86_64-efi --efi-directory="$EFI_DIR" --bootloader-id=GRUB
+            fi
         fi"""
     ],
 )

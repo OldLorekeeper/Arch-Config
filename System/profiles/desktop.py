@@ -89,10 +89,9 @@ systemd.service(
 )
 
 # 5. Kernel & Boot Configuration
-grub_cmdline = "split_lock_detect=off loglevel=3 quiet amdgpu.ppfeaturemask=0xffffffff video=3440x1440@60 zswap.enabled=0 mitigations=off amd_pstate=active"
-
-# Sunshine EDID injection if enabled
-if cfg.get("EDID_ENABLE", "").lower().startswith("y"):
+edid_flag = ""
+edid_enabled = str(cfg.get("EDID_ENABLE", "")).lower() in ("true", "yes", "y", "1")
+if edid_enabled:
     edid_src = f"{repo_dir}/Resources/Sunshine/custom_sunshine.bin"
     if Path(edid_src).exists():
         files.directory(
@@ -111,9 +110,11 @@ if cfg.get("EDID_ENABLE", "").lower().startswith("y"):
             line=r"^FILES=.*",
             replace="FILES=(/usr/lib/firmware/edid/custom_sunshine.bin)",
         )
-        mon_port = cfg.get("MONITOR_PORT", "")
+        mon_port = cfg.get("MONITOR_PORT", "") or "DP-2"
         if mon_port:
-            grub_cmdline += f" drm.edid_firmware={mon_port}:edid/custom_sunshine.bin"
+            edid_flag = f" drm.edid_firmware={mon_port}:edid/custom_sunshine.bin"
+
+grub_cmdline = f"split_lock_detect=off loglevel=3 quiet amdgpu.ppfeaturemask=0xffffffff video=3440x1440@60{edid_flag} zswap.enabled=0 mitigations=off amd_pstate=active"
 
 files.line(
     name="Configure GRUB kernel command line for Desktop",
