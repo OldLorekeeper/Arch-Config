@@ -39,9 +39,10 @@ files.line(
     line="LIBVA_DRIVER_NAME=radeonsi",
 )
 files.line(
-    name="Set AMD VDPAU driver",
+    name="Remove AMD VDPAU driver",
     path="/etc/environment",
-    line="VDPAU_DRIVER=radeonsi",
+    line=r"^VDPAU_DRIVER=.*",
+    present=False,
 )
 
 # 3. Hardware & Power Management
@@ -58,9 +59,9 @@ files.line(
 )
 
 files.put(
-    name="Configure AMD EPP performance profile",
+    name="Configure AMD EPP balance_performance profile",
     dest="/etc/tmpfiles.d/amd-epp.conf",
-    src=StringIO("w /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference - - - - performance\n"),
+    src=StringIO("w /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference - - - - balance_performance\n"),
 )
 
 files.put(
@@ -114,7 +115,7 @@ if edid_enabled:
         if mon_port:
             edid_flag = f" drm.edid_firmware={mon_port}:edid/custom_sunshine.bin"
 
-grub_cmdline = f"split_lock_detect=off loglevel=3 quiet amdgpu.ppfeaturemask=0xffffffff video=3440x1440@60{edid_flag} mitigations=off amd_pstate=active"
+grub_cmdline = f"split_lock_detect=off loglevel=3 quiet amdgpu.ppfeaturemask=0xffffffff video=3440x1440@60{edid_flag} amd_pstate=active"
 
 files.line(
     name="Configure GRUB kernel command line for Desktop",
@@ -399,16 +400,16 @@ files.link(
     user=target_user,
 )
 
-# 9. SCX Scheduler (scx_lavd)
+# 9. SCX Scheduler (scx_bpfland)
 files.directory(
     name="Ensure /etc/scx_loader exists",
     path="/etc/scx_loader",
     present=True,
 )
 files.put(
-    name="Configure scx_lavd default scheduler",
+    name="Configure scx_bpfland default scheduler",
     dest="/etc/scx_loader/config.toml",
-    src=str(TEMPLATES_DIR / "scx_lavd.toml"),
+    src=str(TEMPLATES_DIR / "scx_bpfland.toml"),
 )
 systemd.service(
     name="Enable scx_loader daemon",

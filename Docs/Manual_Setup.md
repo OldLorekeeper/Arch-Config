@@ -78,8 +78,7 @@ Custom scripts should be symlinked to `/usr/local/bin/`. Manually add these **Do
 | Profile | Do | Undo |
 | :--- | :--- | :--- |
 | **HDR** | `/usr/local/bin/sunshine_hdr enable` | `/usr/local/bin/sunshine_hdr disable` |
-| **SDR** | `/usr/local/bin/sunshine_res enable` | `/usr/local/bin/sunshine_res enable` |
-| **GPU Boost** | `sudo /usr/local/bin/sunshine_gpu_boost start` | `sudo /usr/local/bin/sunshine_gpu_boost stop` |
+| **SDR** | `/usr/local/bin/sunshine_res enable` | `/usr/local/bin/sunshine_res disable` |
 
 ## 6. Laptop Specifics
 
