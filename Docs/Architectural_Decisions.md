@@ -122,12 +122,12 @@ Targeted for heavy gaming, Sunshine remote streaming, and continuous media servi
 - **`amd_pstate=active`**:
   - *Decision*: Explicitly configure `amd_pstate=active` on the kernel command line.
   - *Rationale*: Enables hardware-autonomous CPPC v3 frequency scaling on the Zen 4 processor, adjusting clock speeds every millisecond at hardware level.
-- **EPP `balance_performance` vs `performance`**:
-  - *Decision*: Set `/etc/tmpfiles.d/amd-epp.conf` to `balance_performance` instead of permanent `performance`.
+- **EPP `performance` vs `balance_performance`**:
+  - *Decision*: Set `/etc/tmpfiles.d/amd-epp.conf` to `performance` across all logical CPU cores.
   - *Rationale*:
-    - Permanent `performance` keeps all 8 cores pinned at high voltages and C-states, raising idle power from ~15W to ~45W and increasing socket temperatures.
-    - `balance_performance` allows cores to enter micro-sleep states during idle frame intervals, preserving the thermal and electrical budget that Precision Boost Overdrive (PBO) requires to hit maximum single-core boost (5.02 GHz).
-    - `amd-pstate-epp` ramps to full clock speeds in microseconds on demand, delivering identical gaming performance without unnecessary idle heat.
+    - While `balance_performance` lowers idle package power from ~45W to ~15W, practical evaluation in latency-sensitive environments demonstrated observable frame-pacing degradation, audio jitter, and responsiveness penalties during low-to-mid load transitions and concurrent remote game streaming (Sunshine).
+    - `performance` eliminates core wake-up latency and frequency ramp lag, keeping the 7800X3D's 8 cores immediately responsive to unpredictable burst workloads.
+    - System-level thermal and power constraints (LACT board power cap at 310W, custom junction fan curve, `scx_bpfland` vruntime fair scheduling, and aggressive memory reclamation watermarks) prevent CPU and GPU overheating or resource contention, rendering the idle energy savings of `balance_performance` a counterproductive trade-off for this dedicated high-performance desktop.
 - **Mitigations Policy**:
   - *Decision*: Omit `mitigations=off` from GRUB command line, relying on standard hardware-level silicon mitigations.
   - *Rationale*: Zen 4 features hardware-level silicon mitigations for Spectre/Meltdown. Real-world benchmarks show **0% gaming uplift** with mitigations disabled, while unnecessarily exposing the host to browser and Proton exploits.
@@ -272,7 +272,7 @@ Targeted for maximum power efficiency, battery longevity, and silent operation.
 | **Package Arch** | Microarchitecture tuned | `x86_64_v4` / `cachyos-znver4` | `x86_64_v3` / `cachyos-v3` |
 | **Btrfs Layout** | `@`, `@home`, `@pkg`, `@log`, `@.snapshots` | Dedicated `@games` + `/mnt/Media` (nocow) | Standard isolated subvolumes |
 | **ZRAM Capacity** | `zstd` compressed swap | 100% of RAM (32GB virtual swap) | 50% of RAM (16GB virtual swap) |
-| **CPU Driver / EPP** | `amd-pstate` / autonomous | `balance_performance` (GameMode elevate) | Dynamic via TLP / thermald |
+| **CPU Driver / EPP** | `amd-pstate` / autonomous | `performance` (Zero-latency ramp) | Dynamic via TLP / thermald |
 | **Scheduler** | Sched-ext managed | **`scx_bpfland`** (Streaming + Gaming) | **`scx_bpfland`** (Low-overhead eBPF) |
 | **GPU Policy** | VA-API enabled | 310W Cap, Custom Curve, ReBAR | **ACPI Hard-off (`_OFF` power cut)** |
 | **Power Management** | Disabled Wi-Fi power save | EPP profile, Solaar uinput, XHCI fix | **TLP**, 75-90% charge thresholds |

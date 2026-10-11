@@ -59,9 +59,9 @@ files.line(
 )
 
 files.put(
-    name="Configure AMD EPP balance_performance profile",
+    name="Configure AMD EPP performance profile",
     dest="/etc/tmpfiles.d/amd-epp.conf",
-    src=StringIO("w /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference - - - - balance_performance\n"),
+    src=StringIO("w /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference - - - - performance\n"),
 )
 
 files.put(
