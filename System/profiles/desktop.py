@@ -349,7 +349,14 @@ for svc in ["jellyfin", "transmission-daemon", "sonarr", "radarr", "prowlarr", "
         enabled=True,
     )
 
-if Path("/mnt/Media").is_mount():
+has_media = Path("/mnt/Media").is_mount()
+if not has_media and Path("/etc/fstab").exists():
+    try:
+        has_media = "/mnt/Media" in Path("/etc/fstab").read_text()
+    except Exception:
+        pass
+
+if has_media:
     systemd.service(
         name="Enable btrfs scrub timer for /mnt/Media",
         service="btrfs-scrub@mnt-Media.timer",

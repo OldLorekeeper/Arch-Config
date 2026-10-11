@@ -1,34 +1,66 @@
+import re
+import subprocess
 from pyinfra.operations import pacman, server
 from System.config import get_config
 
 cfg = get_config()
 target_user = cfg["TARGET_USER"]
 
-# 1. Common Official Packages
-COMMON_PACKAGES = [
-    "base", "base-devel", "bluez", "bluez-utils", "btrfs-progs",
-    "cachyos-keyring", "cachyos-mirrorlist", "cachyos-settings",
-    "efibootmgr", "git", "git-lfs", "grub", "grub-btrfs", "linux-cachyos",
-    "linux-cachyos-headers", "linux-firmware", "networkmanager", "networkmanager-qt",
-    "openssh", "pacman-contrib", "reflector", "sudo", "timeshift", "vim",
-    "wireless-regdb", "zram-generator", "zsh",
-    "ark", "bluedevil", "dolphin", "kate", "kinfocenter", "konsole", "kscreen",
-    "kwallet-pam", "mesa", "partitionmanager", "pipewire", "pipewire-alsa",
-    "pipewire-pulse", "plasma-desktop", "plasma-disks", "plasma-login-manager",
-    "plasma-nm", "plasma-pa", "plasma-systemmonitor", "powerdevil", "spectacle", "wireplumber",
-    "flatpak-kcm", "kde-gtk-config", "kdeplasma-addons", "krdp", "kwrited",
-    "oxygen", "oxygen-sounds", "plasma-browser-integration", "plasma-firewall",
-    "plasma-thunderbolt", "plasma-vault", "plasma-welcome", "print-manager",
-    "7zip", "bash-language-server", "chromium", "cmake", "cmake-extras", "cpupower",
-    "cups", "dkms", "dnsmasq", "dosfstools", "edk2-ovmf", "ethtool", "extra-cmake-modules", "ghostscript",
-    "fastfetch", "fwupd", "gamemode", "gamescope", "gwenview", "hunspell-en_gb",
-    "inkscape", "isoimagewriter", "iw", "iwd", "jq", "kio-admin", "kio-gdrive", "lib32-gamemode",
-    "lib32-gnutls", "libva-utils", "libvirt", "lz4", "mkinitcpio-firmware",
-    "npm", "nss-mdns", "obsidian", "papirus-icon-theme", "protontricks", "protonup-qt",
-    "qemu-desktop", "realtime-privileges", "steam", "tailscale", "transmission-cli", "uv", "vdpauinfo",
-    "virt-manager", "vlc", "vlc-plugin-ffmpeg", "vulkan-headers", "wayland-protocols",
-    "wine-staging", "wine-mono", "winetricks", "xpadneo-dkms", "inotify-tools"
+def get_plasma_meta_packages(exclude=("discover",)):
+    """
+    Dynamically resolve upstream plasma-meta dependencies excluding unwanted packages
+    (e.g. Discover), ensuring KDE Plasma components stay current with upstream.
+    """
+    try:
+        out = subprocess.check_output(["pacman", "-Si", "plasma-meta"], text=True)
+        match = re.search(r"Depends On\s*:\s*(.*?)(?:\n[A-Z]|\Z)", out, re.DOTALL)
+        if match:
+            deps = [re.split(r"[><=]", pkg.strip())[0] for pkg in match.group(1).split() if pkg.strip()]
+            resolved = [d for d in deps if d not in exclude and d != "None"]
+            if resolved:
+                return resolved
+    except Exception:
+        pass
+    # Safety fallback list if pacman database is offline or uninitialised
+    return [
+        "plasma-desktop", "plasma-login-manager", "plasma-nm", "plasma-pa",
+        "powerdevil", "kscreen", "plasma-systemmonitor", "plasma-disks",
+        "plasma-firewall", "plasma-thunderbolt", "plasma-vault", "plasma-welcome",
+        "plasma-browser-integration", "print-manager", "flatpak-kcm", "kde-gtk-config",
+        "kdeplasma-addons", "krdp", "kwrited", "spectacle", "kwallet-pam", "bluedevil",
+        "kinfocenter", "oxygen", "oxygen-sounds"
+    ]
+
+# 1. Base System, Tools & Non-Plasma Applications
+BASE_AND_APP_PACKAGES = [
+    # System Base, Kernel & Storage
+    "base", "base-devel", "btrfs-progs", "cachyos-keyring", "cachyos-mirrorlist",
+    "cachyos-settings", "efibootmgr", "grub", "grub-btrfs", "linux-cachyos",
+    "linux-cachyos-headers", "linux-firmware", "mkinitcpio-firmware", "sudo",
+    "timeshift", "zram-generator",
+    # Networking & Connectivity
+    "bluez", "bluez-utils", "ethtool", "iw", "iwd", "networkmanager", "networkmanager-qt",
+    "openssh", "reflector", "tailscale", "wireless-regdb",
+    # Audio, Graphics & Media Framework
+    "mesa", "pipewire", "pipewire-alsa", "pipewire-pulse", "wireplumber", "libva-utils",
+    "vdpauinfo", "vulkan-headers", "wayland-protocols",
+    # Shell, Development & Utilities
+    "7zip", "bash-language-server", "cmake", "cmake-extras", "cpupower", "cups", "dkms",
+    "dnsmasq", "dosfstools", "edk2-ovmf", "extra-cmake-modules", "fastfetch", "fwupd",
+    "ghostscript", "git", "git-lfs", "hunspell-en_gb", "inotify-tools", "jq", "libvirt",
+    "lz4", "npm", "nss-mdns", "pacman-contrib", "qemu-desktop", "realtime-privileges",
+    "transmission-cli", "uv", "vim", "virt-manager", "zsh",
+    # Gaming & Proton Stack
+    "gamemode", "gamescope", "lib32-gamemode", "lib32-gnutls", "protontricks", "protonup-qt",
+    "steam", "wine-staging", "wine-mono", "winetricks", "xpadneo-dkms",
+    # Core User Applications & KDE Integration
+    "ark", "chromium", "dolphin", "gwenview", "inkscape", "isoimagewriter", "kate",
+    "kio-admin", "kio-gdrive", "konsole", "obsidian", "papirus-icon-theme",
+    "partitionmanager", "vlc", "vlc-plugin-ffmpeg",
 ]
+
+# Merge dynamically resolved plasma components with base and app packages (deduplicated)
+COMMON_PACKAGES = list(dict.fromkeys(BASE_AND_APP_PACKAGES + get_plasma_meta_packages(exclude=("discover",))))
 
 pacman.packages(
     name="Install common official packages",

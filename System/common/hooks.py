@@ -80,9 +80,9 @@ Type = Package
 Target = papirus-icon-theme
 
 [Action]
-Description = Applying custom Antigravity symbolic/panel icons to Papirus...
+Description = Applying custom Antigravity icons to Papirus...
 When = PostTransaction
-Exec = /bin/sh -c "cp {repo_dir}/Resources/Icons/GoogleWorkspace/google-antigravity-symbolic.svg /usr/share/icons/Papirus/16x16/symbolic/apps/antigravity-symbolic.svg && cp {repo_dir}/Resources/Icons/GoogleWorkspace/google-antigravity-symbolic.svg /usr/share/icons/Papirus/16x16/symbolic/apps/antigravity-ide-symbolic.svg && cp {repo_dir}/Resources/Icons/GoogleWorkspace/google-antigravity-panel.svg /usr/share/icons/Papirus/22x22/panel/antigravity.svg && cp {repo_dir}/Resources/Icons/GoogleWorkspace/google-antigravity-panel.svg /usr/share/icons/Papirus/24x24/panel/antigravity.svg && cp {repo_dir}/Resources/Icons/GoogleWorkspace/google-antigravity-panel.svg /usr/share/icons/Papirus/22x22/panel/antigravity-symbolic.svg && cp {repo_dir}/Resources/Icons/GoogleWorkspace/google-antigravity-panel.svg /usr/share/icons/Papirus/24x24/panel/antigravity-symbolic.svg"
+Exec = /bin/sh -c "cp {repo_dir}/Resources/Icons/GoogleWorkspace/google-antigravity-symbolic.svg /usr/share/icons/Papirus/16x16/symbolic/apps/antigravity-symbolic.svg && cp {repo_dir}/Resources/Icons/GoogleWorkspace/google-antigravity-symbolic.svg /usr/share/icons/Papirus/16x16/symbolic/apps/antigravity-ide-symbolic.svg && cp {repo_dir}/Resources/Icons/GoogleWorkspace/google-antigravity-panel.svg /usr/share/icons/Papirus/22x22/panel/antigravity.svg && cp {repo_dir}/Resources/Icons/GoogleWorkspace/google-antigravity-panel.svg /usr/share/icons/Papirus/24x24/panel/antigravity.svg && cp {repo_dir}/Resources/Icons/GoogleWorkspace/google-antigravity-panel.svg /usr/share/icons/Papirus/22x22/panel/antigravity-symbolic.svg && cp {repo_dir}/Resources/Icons/GoogleWorkspace/google-antigravity-panel.svg /usr/share/icons/Papirus/24x24/panel/antigravity-symbolic.svg && cp {repo_dir}/Resources/Icons/GoogleWorkspace/google-antigravity-ide.svg /usr/share/icons/Papirus/64x64/apps/antigravity-ide.svg"
 """
 files.put(
     name="Install antigravity-icon.hook",

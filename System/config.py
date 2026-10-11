@@ -87,7 +87,20 @@ def get_config():
         if (custom_edid.exists() or repo_edid.exists()) and not edid_enable:
             edid_enable = "true"
         if not monitor_port:
-            monitor_port = "DP-2"
+            try:
+                connected = []
+                for p in Path("/sys/class/drm").glob("*/status"):
+                    if p.read_text().strip() == "connected":
+                        port_name = p.parent.name.split("-", 1)[-1]
+                        connected.append(port_name)
+                if "DP-2" in connected:
+                    monitor_port = "DP-2"
+                elif connected:
+                    monitor_port = connected[0]
+            except Exception:
+                pass
+            if not monitor_port:
+                monitor_port = "DP-2"
 
     cfg["EDID_ENABLE"] = str(edid_enable if edid_enable is not None else "false").lower()
     cfg["MONITOR_PORT"] = monitor_port or ""
